@@ -131,9 +131,6 @@
         .spot-item { transition: all 0.2s ease-in-out; cursor: pointer; border-left: 4px solid transparent; }
         .spot-item:hover { background-color: rgba(243, 229, 171, 0.3); }
         .spot-item.active-spot { background-color: rgba(212, 175, 55, 0.15); border-left-color: #D4AF37; }
-        
-        .loading-text { color: #D4AF37; font-size: 0.8rem; text-align: center; padding: 1rem; animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body class="font-serif">
@@ -185,7 +182,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-2">
                             <h3 class="text-base font-bold text-jp-brown">行李清單</h3>
-                            <span id="sync-status" class="text-[0.6rem] text-gray-400 border border-gray-300 px-1 rounded">連線中...</span>
+                            <span class="text-[0.6rem] text-jp-gold border border-jp-gold px-1 rounded">本機儲存 (離線可用)</span>
                         </div>
                         <div class="text-xs text-gray-500">可點擊編輯</div>
                     </div>
@@ -208,12 +205,12 @@
                                 <option value="隨身包">隨身</option>
                             </select>
                             <input id="new-item-note" type="text" placeholder="備註 (選填)" class="w-full sm:flex-grow p-2 border rounded text-sm">
-                            <button id="add-item-btn" class="w-full sm:w-auto bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-2 sm:py-1 rounded text-sm transition font-bold" disabled>等待連線...</button>
+                            <button id="add-item-btn" onclick="addItem()" class="w-full sm:w-auto bg-jp-gold text-white hover:bg-yellow-600 px-4 py-2 sm:py-1 rounded text-sm transition font-bold">新增</button>
                         </div>
                     </div>
 
                     <div id="luggage-list-container" class="space-y-1 max-h-[400px] overflow-y-auto pr-1">
-                        <div class="loading-text">載入清單中...</div>
+                        <!-- Items rendered by JS -->
                     </div>
                 </div>
             </div>
@@ -378,8 +375,33 @@
                 <div><h3 class="text-lg font-bold text-jp-brown">航班詳細資訊</h3></div>
                 <button onclick="closeFlightModal()" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
             </div>
-            <!-- Flight content omitted for brevity, same as previous -->
-            <div class="text-center text-gray-500 py-4">詳細航班資訊請見確認信</div>
+            <!-- Flight content omitted for brevity -->
+            <div class="space-y-4 overflow-y-auto max-h-[60vh] pr-2">
+                <!-- 去程 -->
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-jp-red text-white text-xs px-2 py-1 rounded font-bold">去程</span>
+                        <span class="text-sm font-bold text-jp-brown">GK012</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2 text-center">
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">02:30</div><div class="text-xs text-gray-500">TPE T1</div></div>
+                        <div class="text-gray-300 text-xs">──✈──</div>
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">06:35</div><div class="text-xs text-gray-500">NRT T3</div></div>
+                    </div>
+                </div>
+                <!-- 回程 -->
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-jp-brown text-white text-xs px-2 py-1 rounded font-bold">回程</span>
+                        <span class="text-sm font-bold text-jp-brown">TR875</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2 text-center">
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">19:55</div><div class="text-xs text-gray-500">NRT T1</div></div>
+                        <div class="text-gray-300 text-xs">──✈──</div>
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">23:10</div><div class="text-xs text-gray-500">TPE T1</div></div>
+                    </div>
+                </div>
+            </div>
             <button onclick="closeFlightModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">關閉</button>
         </div>
     </div>
@@ -401,176 +423,165 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query as firestoreQuery } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+    <!-- Scripts (No Module, Standard JS) -->
+    <script>
+        // --- 預設資料 (若無 LocalStorage 資料時使用) ---
+        const defaultLuggageItems = [
+            { id: 1, category: "3C", location: "大箱", item: "充電頭+線*2", note: "", checked: false },
+            { id: 2, category: "化妝、保養", location: "大箱", item: "化妝包", note: "", checked: false },
+            { id: 3, category: "化妝、保養", location: "大箱", item: "保養品", note: "雅漾、洗面乳、乳液、卸妝、隱眼", checked: false },
+            { id: 4, category: "化妝、保養", location: "大箱", item: "電棒", note: "", checked: false },
+            { id: 5, category: "衣物", location: "大箱", item: "靴子", note: "", checked: false },
+            { id: 6, category: "衣物", location: "大箱", item: "帽子", note: "", checked: false },
+            { id: 7, category: "衣物", location: "大箱", item: "固定髮夾", note: "", checked: false },
+            { id: 8, category: "衣物", location: "大箱", item: "褲襪", note: "", checked: false },
+            { id: 9, category: "衣物", location: "大箱", item: "睡衣", note: "", checked: false },
+            { id: 10, category: "雜物", location: "大箱", item: "護手霜", note: "", checked: false },
+            { id: 11, category: "化妝、保養", location: "登機箱", item: "鏡子", note: "", checked: false },
+            { id: 12, category: "化妝、保養", location: "登機箱", item: "香水", note: "", checked: false },
+            { id: 13, category: "化妝、保養", location: "登機箱", item: "小化妝包", note: "補妝用", checked: false },
+            { id: 14, category: "衣物", location: "登機箱", item: "厚外套", note: "", checked: false },
+            { id: 15, category: "雜物", location: "登機箱", item: "藥品", note: "", checked: false },
+            { id: 16, category: "雜物", location: "登機箱", item: "牙刷", note: "", checked: false },
+            { id: 17, category: "雜物", location: "登機箱", item: "暖暖包", note: "", checked: false },
+            { id: 18, category: "雜物", location: "登機箱", item: "行李秤", note: "", checked: false },
+            { id: 19, category: "3C", location: "隨身包", item: "耳機", note: "", checked: false },
+            { id: 20, category: "3C", location: "隨身包", item: "行動電源", note: "", checked: false },
+            { id: 21, category: "3C", location: "隨身包", item: "網卡", note: "", checked: false },
+            { id: 22, category: "3C", location: "隨身包", item: "自拍棒", note: "", checked: false },
+            { id: 23, category: "化妝、保養", location: "隨身包", item: "護唇膏", note: "", checked: false },
+            { id: 24, category: "化妝、保養", location: "隨身包", item: "梳子", note: "", checked: false },
+            { id: 25, category: "重要", location: "隨身包", item: "護照", note: "", checked: false },
+            { id: 26, category: "重要", location: "隨身包", item: "日幣", note: "", checked: false },
+            { id: 27, category: "重要", location: "隨身包", item: "提款卡", note: "", checked: false },
+            { id: 28, category: "雜物", location: "隨身包", item: "衛生紙", note: "", checked: false },
+            { id: 29, category: "雜物", location: "隨身包", item: "濕紙巾", note: "", checked: false },
+            { id: 30, category: "雜物", location: "大箱", item: "指甲剪", note: "", checked: false },
+        ];
 
-        // Firebase Config Handling with Fallback
-        let app, auth, db, appId;
-        try {
-            const configStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-            if (configStr) {
-                const firebaseConfig = JSON.parse(configStr);
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-            } else {
-                throw new Error("No config");
-            }
-        } catch (e) {
-            console.warn("Firebase config not found. Running in offline/demo mode.");
-            document.querySelector('#sync-status').textContent = "離線模式";
-            document.querySelector('#luggage-list-container').innerHTML = '<div class="text-center text-gray-400 p-4">無法連接資料庫 (未設定環境變數)</div>';
-        }
-
-        let user = null;
-        let luggageItems = []; 
+        // --- Local Storage Logic ---
+        const STORAGE_KEY = 'tokyo_trip_luggage_v1';
+        let luggageItems = [];
         let currentEditId = null;
         let itemToDeleteId = null;
 
-        // Auth & Init
-        async function initApp() {
-            if (!auth) return;
-            
-            // Timeout check for loading
-            const loadTimeout = setTimeout(() => {
-                const container = document.getElementById('luggage-list-container');
-                if (container && container.innerHTML.includes('載入清單中')) {
-                    container.innerHTML = '<div class="text-center text-gray-400 text-sm p-4">讀取過久，請檢查網路。<br><button onclick="location.reload()" class="mt-2 text-blue-500 underline">重新整理</button></div>';
+        function initApp() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    luggageItems = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Parse error", e);
+                    luggageItems = [...defaultLuggageItems];
                 }
-            }, 5000);
-
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Auth Error:", error);
+            } else {
+                luggageItems = [...defaultLuggageItems];
             }
-
-            onAuthStateChanged(auth, (u) => {
-                user = u;
-                if (user) {
-                    clearTimeout(loadTimeout);
-                    setupRealtimeListener();
-                    
-                    // Enable Add Button
-                    const btn = document.getElementById('add-item-btn');
-                    if(btn) {
-                        btn.disabled = false;
-                        btn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                        btn.classList.add('bg-jp-gold', 'text-white', 'hover:bg-yellow-600');
-                        btn.textContent = "新增";
-                    }
-                    
-                    const statusEl = document.getElementById('sync-status');
-                    if(statusEl) {
-                        statusEl.textContent = "已連線";
-                        statusEl.classList.remove('text-gray-400', 'border-gray-300');
-                        statusEl.classList.add('text-jp-gold', 'border-jp-gold');
-                    }
-                }
-            });
+            renderLuggage();
         }
 
-        function setupRealtimeListener() {
-            if (!user || !db) return;
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'luggage_list');
-            
-            onSnapshot(colRef, (snapshot) => {
-                luggageItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderLuggage();
-            }, (error) => {
-                console.error("Firestore Error:", error);
-                const container = document.getElementById('luggage-list-container');
-                if(container) container.innerHTML = `<div class="text-red-500 text-center text-sm p-4">載入失敗，請稍後再試。</div>`;
-            });
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(luggageItems));
+            renderLuggage();
         }
 
-        // --- CRUD Functions ---
-        window.addItemToFirestore = async () => {
-            if (!user) { alert("尚未連線，請稍候..."); return; }
+        function addItem() {
             const nameInput = document.getElementById('new-item-input');
             const catInput = document.getElementById('new-item-category');
             const locInput = document.getElementById('new-item-location');
             const noteInput = document.getElementById('new-item-note');
-            const btn = document.getElementById('add-item-btn');
-
+            
             const name = nameInput.value.trim();
             if (!name) return;
 
-            btn.disabled = true; btn.textContent = "...";
+            const newItem = {
+                id: Date.now(), // simple ID
+                item: name,
+                category: catInput.value,
+                location: locInput.value,
+                note: noteInput.value,
+                checked: false
+            };
 
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'luggage_list'), {
-                    item: name, category: catInput.value, location: locInput.value, note: noteInput.value, checked: false, createdAt: new Date().toISOString()
-                });
-                nameInput.value = ''; noteInput.value = '';
-            } catch (e) {
-                console.error("Add Error:", e); alert("新增失敗");
-            } finally {
-                btn.disabled = false; btn.textContent = "新增";
+            luggageItems.push(newItem);
+            nameInput.value = '';
+            noteInput.value = '';
+            saveData();
+        }
+
+        function toggleCheck(id) {
+            // id might be string or number depending on how it was created
+            const item = luggageItems.find(i => i.id == id);
+            if (item) {
+                item.checked = !item.checked;
+                saveData();
             }
-        };
+        }
 
-        window.toggleCheck = async (docId, currentStatus) => {
-            if (!user) return;
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'luggage_list', docId), { checked: !currentStatus }); } catch (e) { console.error(e); }
-        };
-
-        window.openEdit = (docId) => {
-            currentEditId = docId;
-            const item = luggageItems.find(i => i.id === docId);
+        function openEdit(id) {
+            currentEditId = id;
+            const item = luggageItems.find(i => i.id == id);
             if (!item) return;
+
             document.getElementById('edit-item-name').value = item.item;
             document.getElementById('edit-item-note').value = item.note || '';
-            // Populate selects
+            
             const cats = ['雜物','3C','衣物','化妝、保養','重要'];
             const locs = ['大箱','登機箱','隨身包'];
+            
             document.getElementById('edit-item-category').innerHTML = cats.map(c => `<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join('');
             document.getElementById('edit-item-location').innerHTML = locs.map(l => `<option value="${l}" ${l===item.location?'selected':''}>${l}</option>`).join('');
+            
             document.getElementById('edit-modal').style.display = 'block';
-        };
+        }
 
-        window.saveEdit = async () => {
-            if (!user || !currentEditId) return;
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'luggage_list', currentEditId), {
-                    item: document.getElementById('edit-item-name').value,
-                    category: document.getElementById('edit-item-category').value,
-                    location: document.getElementById('edit-item-location').value,
-                    note: document.getElementById('edit-item-note').value
-                });
-                document.getElementById('edit-modal').style.display = 'none';
-            } catch (e) { alert("更新失敗"); }
-        };
+        function saveEdit() {
+            const item = luggageItems.find(i => i.id == currentEditId);
+            if (item) {
+                item.item = document.getElementById('edit-item-name').value;
+                item.category = document.getElementById('edit-item-category').value;
+                item.location = document.getElementById('edit-item-location').value;
+                item.note = document.getElementById('edit-item-note').value;
+                saveData();
+                closeModal();
+            }
+        }
 
-        window.openDelete = (docId) => { itemToDeleteId = docId; document.getElementById('delete-modal').style.display = 'block'; };
-        window.confirmDelete = async () => {
-            if (!user || !itemToDeleteId) return;
-            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'luggage_list', itemToDeleteId)); document.getElementById('delete-modal').style.display = 'none'; } catch (e) { alert("刪除失敗"); }
-        };
+        function openDelete(id) {
+            itemToDeleteId = id;
+            document.getElementById('delete-modal').style.display = 'block';
+        }
+
+        function confirmDelete() {
+            if (itemToDeleteId !== null) {
+                luggageItems = luggageItems.filter(i => i.id != itemToDeleteId);
+                saveData();
+                closeDeleteModal();
+            }
+        }
+
+        function closeDeleteModal() {
+            itemToDeleteId = null;
+            document.getElementById('delete-modal').style.display = 'none';
+        }
 
         function renderLuggage() {
             const container = document.getElementById('luggage-list-container');
             if(!container) return;
             container.innerHTML = '';
+            
             if (luggageItems.length === 0) {
                 container.innerHTML = '<div class="text-center text-gray-400 text-sm p-4">清單目前是空的，請新增物品。</div>';
                 return;
             }
-            // Sort
+
+            // Sort: Location -> Category -> Checked
             const sorted = [...luggageItems].sort((a, b) => {
                 if(a.location !== b.location) return a.location.localeCompare(b.location, "zh-TW");
                 if(a.category !== b.category) return a.category.localeCompare(b.category, "zh-TW");
                 return a.checked - b.checked;
             });
-            // Render
+
             sorted.forEach(item => {
                 let locColor = 'bg-gray-100 text-gray-800';
                 if (item.location === '大箱') locColor = 'bg-blue-100 text-blue-800 border border-blue-200';
@@ -581,7 +592,7 @@
 
                 container.innerHTML += `
                     <div class="flex items-start p-2 bg-gray-50 rounded border border-gray-100 hover:bg-white transition ${item.checked ? 'opacity-50' : ''}">
-                        <input type="checkbox" class="mt-1 mr-2 cursor-pointer" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}', ${item.checked})">
+                        <input type="checkbox" class="mt-1 mr-2 cursor-pointer" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}')">
                         <div class="flex-grow">
                             <div class="flex gap-1 mb-1">
                                 <span class="text-xs px-1.5 rounded ${locColor}">${item.location}</span>
@@ -597,7 +608,7 @@
             });
         }
 
-        /* --- STATIC DATA & LOGIC --- */
+        /* --- Other Static Data & Functions --- */
         const spotsData = [
             { name: "Chateraise PREMIUM YATSUDOKI Shiodome", type: "food", note: "甜點/蛋糕", map: "https://goo.gl/maps/search/Chateraise+PREMIUM+YATSUDOKI+Shiodome" },
             { name: "川豊本店", type: "food", note: "成田鰻魚飯老店", map: "https://goo.gl/maps/search/川豊本店" },
@@ -942,7 +953,7 @@
             renderShoppingList();
             renderItinerary('day1', document.querySelector('.date-tab'));
             updateMap('Tokyo Station');
-            initApp();
+            initApp(); // Use the local storage initApp
         });
     </script>
 </body>
