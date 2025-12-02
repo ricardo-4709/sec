@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>東京 5 日客製化行程規劃 (2025/12/5-12/9)</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts (日式優雅襯線體) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'jp-gold': '#D4AF37', /* 銀杏金 */
+                        'jp-gold-light': '#F3E5AB',
+                        'jp-brown': '#594a4e', /* 傳統深褐 */
+                        'jp-red': '#C0392B',    /* 點綴紅 (鳥居色) */
+                        'jp-cream': '#FDFCF5', /* 和紙白 */
+                    },
+                    fontFamily: {
+                        sans: ['Zen Old Mincho', 'Noto Serif TC', 'serif'],
+                        serif: ['Zen Old Mincho', 'Noto Serif TC', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: #FDFCF5; /* 和紙白背景 */
+            background-image: radial-gradient(#D4AF37 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            color: #594a4e;
+        }
+
+        /* 隱藏捲軸但保留功能 (Chrome/Safari/Webkit) */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* 隱藏捲軸 (IE/Edge/Firefox) */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* 優雅按鈕樣式 (縮小版) */
+        .nav-btn {
+            position: relative;
+            padding: 0.35rem 1rem; /* 縮小 Padding */
+            margin-right: 0.25rem;
+            font-size: 0.85rem;    /* 縮小字體 */
+            font-weight: 600;
+            color: #594a4e;
+            border: 1px solid #D4AF37;
+            border-radius: 9999px; /* Pill shape */
+            transition: all 0.3s ease;
+            background-color: white;
+            white-space: nowrap; /* 防止文字換行 */
+            flex-shrink: 0; /* 防止按鈕被壓縮 */
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background-color: #D4AF37;
+            color: white;
+            box-shadow: 0 2px 4px -1px rgba(212, 175, 55, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* 內容區塊 */
+        .content-section { display: none; }
+        .content-section.active { 
+            display: block; 
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 日期選單樣式優化 (左側直條) */
+        .date-tab {
+            display: block;
+            width: 100%;
+            text-align: center; /* 手機版置中 */
+            padding: 0.75rem 0.25rem;
+            border-right: 3px solid transparent; /* 右側邊框標示 (Mobile) */
+            border-left: 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: #594a4e;
+            transition: all 0.3s;
+            font-family: 'Zen Old Mincho', serif;
+        }
+        @media (min-width: 768px) {
+            .date-tab {
+                text-align: left;
+                padding: 1rem 1.5rem;
+                border-right: 0;
+                border-left: 4px solid transparent; /* 電腦版維持左側邊框 */
+                border-bottom: 0;
+            }
+        }
+        
+        .date-tab:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        .date-tab.active {
+            background-color: white;
+            font-weight: bold;
+        }
+        
+        /* Mobile Active Style */
+        @media (max-width: 767px) {
+            .date-tab.active {
+                border-right-color: #D4AF37;
+                background-color: #fff;
+            }
+        }
+        /* Desktop Active Style */
+        @media (min-width: 768px) {
+            .date-tab.active {
+                border-left-color: #D4AF37;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            }
+        }
+
+        .date-tab .day-num { font-size: 1rem; display: block; font-weight: bold; }
+        .date-tab .day-week { font-size: 0.7rem; opacity: 0.8; display: block; margin-top: 2px; }
+        
+        @media (min-width: 768px) {
+            .date-tab .day-num { font-size: 1.25rem; }
+            .date-tab .day-week { font-size: 0.875rem; }
+        }
+
+        /* 詳細行程時間軸 (間距縮短) */
+        .timeline-container {
+            position: relative;
+            padding-left: 1rem; /* 縮小內縮 */
+        }
+        @media (min-width: 768px) {
+            .timeline-container { padding-left: 2rem; }
+        }
+        .detail-item {
+            position: relative;
+            padding-bottom: 1.5rem; /* 大幅縮短間距 */
+            border-left: 1px solid #D4AF37;
+            padding-left: 1.25rem;
+        }
+        .detail-item:last-child { border-left: transparent; }
+        .detail-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 11px;
+            height: 11px;
+            background-color: #FDFCF5;
+            border: 2px solid #D4AF37;
+            border-radius: 50%;
+        }
+        .detail-time {
+            font-family: 'Noto Serif TC', serif;
+            color: #D4AF37;
+            font-weight: bold;
+            margin-bottom: 0.1rem;
+            font-size: 0.85rem;
+        }
+        .detail-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #594a4e;
+            margin-bottom: 0.25rem;
+        }
+        .detail-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            background-color: rgba(243, 229, 171, 0.15); 
+            padding: 0.5rem; /* 縮小內距 */
+            border-radius: 0.5rem;
+        }
+        .recommend-tag {
+            display: inline-block;
+            margin-top: 0.25rem;
+            background-color: #FCE7F3; 
+            color: #9D174D;
+            font-size: 0.7rem;
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid #FBCFE8;
+        }
+
+        /* 餐廳推薦列表樣式 */
+        .dining-list {
+            margin-top: 0.5rem;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.4rem;
+        }
+        .dining-header {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #D4AF37;
+            margin-bottom: 0.25rem;
+            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 0.2rem;
+        }
+        .dining-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed #f3f4f6;
+        }
+        .dining-item:last-child { border-bottom: none; }
+        .dining-name-link {
+            font-weight: bold;
+            color: #594a4e;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .dining-name-link:hover {
+            color: #D4AF37;
+            text-decoration: underline;
+        }
+        .dining-note {
+            font-size: 0.7rem;
+            color: #666;
+            display: block;
+            margin-top: 1px;
+        }
+        .dining-rating {
+            font-size: 0.7rem;
+            color: #d97706; /* Amber-600 */
+            background-color: #fef3c7;
+            padding: 1px 4px;
+            border-radius: 3px;
+            white-space: nowrap;
+            margin-left: 0.5rem;
+            flex-shrink: 0;
+        }
+        .in-map-badge {
+            font-size: 0.6rem;
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 0 3px;
+            border-radius: 2px;
+            margin-left: 3px;
+            white-space: nowrap;
+        }
+
+        /* 購物清單樣式 */
+        .shop-category {
+            font-weight: bold;
+            color: #D4AF37;
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #F3E5AB;
+            padding-bottom: 0.25rem;
+        }
+        .shop-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 0.6rem;
+            background: white;
+            border: 1px solid #f3f4f6;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+        .shop-item:hover {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-color: #D4AF37;
+        }
+        .shop-item.checked {
+            opacity: 0.6;
+            background-color: #f9fafb;
+        }
+        .shop-item.checked .shop-name {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        .shop-tag {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .tag-drugstore { background-color: #fee2e2; color: #b91c1c; } /* Red for Drugstore */
+        .tag-variety { background-color: #fef3c7; color: #d97706; } /* Yellow for Loft/3coins */
+        .tag-fashion { background-color: #e0e7ff; color: #4338ca; } /* Blue for Fashion */
+        .tag-contact { background-color: #fce7f3; color: #be185d; } /* Pink for Contact Lens */
+
+        /* 模態框樣式 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0; top: 0;
+            width: 100%; height: 100%; 
+            overflow: auto; 
+            background-color: rgba(89, 74, 78, 0.6); 
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background-color: #FDFCF5;
+            margin: 10% auto;
+            padding: 1.5rem;
+            border: 1px solid #D4AF37;
+            width: 90%; 
+            max-width: 500px;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 分類標籤樣式 */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid currentColor;
+        }
+        .filter-btn.active {
+            background-color: #594a4e;
+            color: #FDFCF5;
+            border-color: #594a4e;
+        }
+
+        /* 列表項目互動樣式 */
+        .spot-item {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .spot-item:hover {
+            background-color: rgba(243, 229, 171, 0.3);
+        }
+        .spot-item.active-spot {
+            background-color: rgba(212, 175, 55, 0.15);
+            border-left-color: #D4AF37;
+        }
+    </style>
+</head>
+<body class="font-serif">
+
+    <!-- 頂部導覽列 (高度縮小) -->
+    <nav class="sticky top-0 z-50 bg-jp-cream/95 backdrop-blur-md shadow-sm border-b border-jp-gold/20">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center justify-center py-2"> <!-- Padding reduced -->
+                <div class="mb-2">
+                    <!-- Title font size reduced -->
+                    <h1 class="text-xl sm:text-2xl font-bold text-jp-brown tracking-widest border-b-2 border-jp-gold pb-1 px-4">TOKYO TRIP</h1>
+                </div>
+                <!-- 手機版導覽列 -->
+                <div class="flex flex-nowrap justify-start sm:justify-center gap-1 w-full overflow-x-auto no-scrollbar px-1 pb-1 scroll-smooth">
+                    <button class="nav-btn active" data-section="checklist">行前準備</button>
+                    <button class="nav-btn" data-section="transport">交通住宿</button>
+                    <button class="nav-btn" data-section="daily-itinerary">每日行程</button>
+                    <button class="nav-btn" data-section="map-list">旅程地圖</button>
+                    <button class="nav-btn" data-section="shopping-list">購物清單</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="max-w-6xl mx-auto py-2 px-2 sm:px-6 lg:px-8 min-h-screen">
+
+        <!-- 1. 行前準備 -->
+        <section id="checklist" class="content-section active bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20">
+            <h2 class="text-xl font-bold text-jp-brown mb-4 md:mb-8 flex items-center justify-center">
+                <span class="text-jp-gold mr-3">✦</span> 行前準備 <span class="text-jp-gold ml-3">✦</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                <!-- 預先購買 -->
+                <div class="bg-jp-gold-light/10 p-4 rounded-lg border border-jp-gold/20">
+                    <h3 class="text-base font-bold text-jp-red mb-3 flex items-center">
+                        ⚠️ 務必預先預約 / 搶票
+                    </h3>
+                    <ul class="space-y-2 text-sm text-jp-brown list-disc list-inside">
+                        <li><strong>SHIBUYA SKY：</strong> 12/7 日落場次 (約 16:00-16:20)。</li>
+                        <li><strong>軍港巡航：</strong> 12/6 12:00 船班。</li>
+                        <li><strong>水上巴士：</strong> 12/8 淺草 → 浜離宮。</li>
+                        <li><strong>瓔珞 (午餐)：</strong> 12/5 12:15 (已訂位)。</li>
+                        <li><strong>交通券：</strong> N'EX、小田急、Subway Ticket。</li>
+                    </ul>
+                </div>
+                
+                <!-- 行李清單 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base font-bold text-jp-brown">行李清單</h3>
+                        <div class="text-xs text-gray-500">可點擊編輯</div>
+                    </div>
+                    
+                    <div class="mb-4 bg-gray-50 p-2 rounded border border-gray-100 flex flex-col gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input id="new-item-input" type="text" placeholder="物品名稱" class="w-full sm:flex-grow p-2 border rounded text-sm focus:outline-none focus:border-jp-gold">
+                            <select id="new-item-category" class="w-full sm:w-auto p-2 border rounded text-sm bg-white">
+                                <option value="雜物">雜物</option>
+                                <option value="3C">3C</option>
+                                <option value="衣物">衣物</option>
+                                <option value="化妝、保養">保養</option>
+                                <option value="重要">重要</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <select id="new-item-location" class="w-full sm:w-1/3 p-2 border rounded text-sm bg-white">
+                                <option value="大箱">大箱</option>
+                                <option value="登機箱">登機箱</option>
+                                <option value="隨身包">隨身</option>
+                            </select>
+                            <input id="new-item-note" type="text" placeholder="備註 (選填)" class="w-full sm:flex-grow p-2 border rounded text-sm">
+                            <button id="add-item-btn" class="w-full sm:w-auto bg-jp-gold text-white px-4 py-2 sm:py-1 rounded text-sm hover:bg-yellow-600 transition font-bold">新增</button>
+                        </div>
+                    </div>
+
+                    <div id="luggage-list-container" class="space-y-1 max-h-[400px] overflow-y-auto pr-1">
+                        <!-- Items rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 交通住宿 -->
+        <section id="transport" class="content-section bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20">
+            <h2 class="text-xl font-bold text-jp-brown mb-4 md:mb-8 flex items-center justify-center">
+                <span class="text-jp-gold mr-3">✦</span> 交通與住宿 <span class="text-jp-gold ml-3">✦</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                <!-- 住宿資訊 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-jp-brown border-l-4 border-jp-gold pl-2">住宿地點</h3>
+                    
+                    <div class="bg-jp-gold-light/20 p-4 rounded-lg border border-jp-gold/30 hover:shadow-md transition">
+                        <h4 class="font-bold text-base mb-1 text-jp-brown">箱根：Hakone Pax Yoshino</h4>
+                        <div class="text-sm space-y-1 opacity-90">
+                            <p>📅 入住：12/5 (週五)</p>
+                            <p>💰 費用：NT$5,933</p>
+                            <p class="text-jp-gold font-medium mt-1">♨️ 含溫泉設施，近箱根湯本站。</p>
+                        </div>
+                    </div>
+
+                    <!-- 東京住宿：秋葉苑 -->
+                    <div class="bg-jp-gold-light/20 p-4 rounded-lg border border-jp-red/30 hover:shadow-md transition relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-jp-red text-white text-xs px-2 py-1 rounded-bl">重要</div>
+                        <h4 class="font-bold text-base mb-1 text-jp-brown">東京：秋葉苑</h4>
+                        <div class="text-sm space-y-1 opacity-90">
+                            <p>📅 入住：12/6 - 12/8 (三晚)</p>
+                            <p>📍 地址：千代田区外神田三丁目8-8</p>
+                            <p>📞 電話：070-8333-3174</p>
+                        </div>
+                        <button onclick="openAccommodationModal()" class="mt-3 w-full border border-jp-red text-jp-red hover:bg-jp-red hover:text-white font-bold py-1.5 px-4 rounded transition duration-300 text-sm flex items-center justify-center">
+                            <span class="mr-2">⚠️</span> 查看入住須知 & 警告
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 交通資訊 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-jp-brown border-l-4 border-jp-gold pl-2">航班資訊</h3>
+                    
+                    <div onclick="openFlightModal()" class="cursor-pointer group bg-white p-4 rounded-lg border border-jp-gold/30 shadow-sm hover:shadow-md hover:border-jp-gold transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-jp-gold text-white text-xs px-2 py-1 rounded-bl-lg font-bold">點擊查看詳情</div>
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-jp-gold/10 p-2 rounded-full text-xl">✈️</div>
+                                <div>
+                                    <h4 class="text-base font-bold text-jp-brown">台北 ⇌ 東京</h4>
+                                    <p class="text-xs text-gray-500">2025/12/5 - 12/9</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 text-xs text-gray-600">
+                                <span class="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+                                    <span class="text-jp-red font-bold">去</span> GK012
+                                </span>
+                                <span class="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+                                    <span class="text-jp-brown font-bold">回</span> TR875
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-jp-brown border-l-4 border-jp-gold pl-2">交通票券</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm leading-relaxed">
+                        <ul class="space-y-2 list-disc list-outside ml-4 text-jp-brown">
+                            <li><span class="font-bold">N'EX 成田特快</span>：機場往返。</li>
+                            <li><span class="font-bold">箱根周遊券</span> + 浪漫特快特急費。</li>
+                            <li><span class="font-bold">Subway Ticket (3日)</span>：12/7~12/9。</li>
+                            <li><span class="font-bold">西瓜卡 (Suica)</span>：輔助用。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 每日行程 (Modified Layout: Sidebar Left) -->
+        <section id="daily-itinerary" class="content-section bg-white rounded-2xl shadow-lg border border-jp-gold/20 overflow-hidden">
+            <!-- 
+                Change: Always flex-row, Left Sidebar for Dates
+            -->
+            <div class="flex flex-row h-[85vh] md:h-[650px]">
+                
+                <!-- 日期選單 (固定在左側) -->
+                <div class="w-20 md:w-1/4 bg-gray-50 border-r border-gray-200 flex flex-col overflow-y-auto no-scrollbar flex-shrink-0 z-10">
+                    <button class="date-tab active" onclick="renderItinerary('day1', this)">
+                        <span class="day-num">12/5</span>
+                        <span class="day-week">週五</span>
+                    </button>
+                    <button class="date-tab" onclick="renderItinerary('day2', this)">
+                        <span class="day-num">12/6</span>
+                        <span class="day-week">週六</span>
+                    </button>
+                    <button class="date-tab" onclick="renderItinerary('day3', this)">
+                        <span class="day-num">12/7</span>
+                        <span class="day-week">週日</span>
+                    </button>
+                    <button class="date-tab" onclick="renderItinerary('day4', this)">
+                        <span class="day-num">12/8</span>
+                        <span class="day-week">週一</span>
+                    </button>
+                    <button class="date-tab" onclick="renderItinerary('day5', this)">
+                        <span class="day-num">12/9</span>
+                        <span class="day-week">週二</span>
+                    </button>
+                </div>
+
+                <!-- 行程內容 -->
+                <div class="flex-1 bg-white overflow-y-auto h-full p-3 md:p-8 relative scroll-smooth">
+                    <div id="itinerary-content">
+                        <!-- Content will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 旅程地圖 -->
+        <section id="map-list" class="content-section bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20">
+            <h2 class="text-xl font-bold text-jp-brown mb-4 flex items-center justify-center">
+                <span class="text-jp-gold mr-3">✦</span> 旅程地圖 <span class="text-jp-gold ml-3">✦</span>
+            </h2>
+
+            <!-- 篩選器 -->
+            <div class="flex flex-wrap justify-center gap-2 mb-4">
+                <button class="filter-btn active px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="all">全部</button>
+                <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="food">美食</button>
+                <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="shopping">購物</button>
+                <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="sightseeing">景點</button>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4 h-[85vh] md:h-[600px]">
+                <div class="w-full md:w-3/5 h-2/5 md:h-full rounded-xl overflow-hidden shadow-md border border-gray-300 relative bg-gray-100 shrink-0">
+                    <iframe id="map-frame" class="w-full h-full border-0" loading="lazy" allowfullscreen src=""></iframe>
+                    <div id="map-placeholder" class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500 text-sm p-4 text-center">
+                        請點擊地點以顯示地圖
+                    </div>
+                </div>
+                <div class="w-full md:w-2/5 h-3/5 md:h-full overflow-y-auto pr-1 space-y-2" id="spots-list-container"></div>
+            </div>
+        </section>
+
+        <!-- 5. 購物清單 -->
+        <section id="shopping-list" class="content-section bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20">
+            <h2 class="text-xl font-bold text-jp-brown mb-4 flex items-center justify-center">
+                <span class="text-jp-gold mr-3">✦</span> 買買買清單 <span class="text-jp-gold ml-3">✦</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shopping-list-container"></div>
+        </section>
+
+    </main>
+
+    <!-- Modals (編輯 & 住宿須知 & 刪除確認) -->
+    
+    <!-- 1. 編輯物品 Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-lg font-bold mb-4 text-jp-brown">編輯物品</h3>
+            <div class="space-y-3">
+                <input id="edit-item-name" class="w-full p-2 border rounded text-sm" placeholder="名稱">
+                <div class="flex gap-2">
+                    <select id="edit-item-category" class="w-1/2 p-2 border rounded text-sm bg-white"></select>
+                    <select id="edit-item-location" class="w-1/2 p-2 border rounded text-sm bg-white"></select>
+                </div>
+                <input id="edit-item-note" class="w-full p-2 border rounded text-sm" placeholder="備註">
+                <div class="flex justify-end gap-2 mt-4">
+                    <button onclick="closeModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded">取消</button>
+                    <button onclick="saveEdit()" class="px-3 py-1.5 text-sm bg-jp-gold text-white rounded">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：刪除確認 Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content !max-w-sm text-center">
+            <h3 class="text-lg font-bold mb-4 text-jp-brown">確定刪除此物品？</h3>
+            <p class="text-sm text-gray-500 mb-6">此動作無法復原。</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="closeDeleteModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded hover:bg-gray-300">取消</button>
+                <button onclick="confirmDelete()" class="px-3 py-1.5 text-sm bg-jp-red text-white rounded hover:bg-red-700">確定刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：航班詳細資訊 Modal -->
+    <div id="flight-modal" class="modal">
+        <div class="modal-content !max-w-2xl">
+            <div class="flex justify-between items-center mb-4 border-b border-jp-gold/20 pb-2">
+                <div>
+                    <h3 class="text-lg font-bold text-jp-brown">航班詳細資訊</h3>
+                    <p class="text-xs text-gray-500 mt-1">訂單編號：1616326399870957</p>
+                </div>
+                <button onclick="closeFlightModal()" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+            </div>
+            <div class="space-y-4 overflow-y-auto max-h-[60vh] pr-2">
+                <!-- 去程 -->
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-jp-red text-white text-xs px-2 py-1 rounded font-bold">去程</span>
+                        <span class="text-sm font-bold text-jp-brown">GK012</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2 text-center">
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">02:30</div><div class="text-xs text-gray-500">TPE T1</div></div>
+                        <div class="text-gray-300 text-xs">──✈──</div>
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">06:35</div><div class="text-xs text-gray-500">NRT T3</div></div>
+                    </div>
+                </div>
+                <!-- 回程 -->
+                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-jp-brown text-white text-xs px-2 py-1 rounded font-bold">回程</span>
+                        <span class="text-sm font-bold text-jp-brown">TR875</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2 text-center">
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">19:55</div><div class="text-xs text-gray-500">NRT T1</div></div>
+                        <div class="text-gray-300 text-xs">──✈──</div>
+                        <div><div class="text-xl font-bold text-jp-brown font-serif">23:10</div><div class="text-xs text-gray-500">TPE T1</div></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeFlightModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">關閉</button>
+        </div>
+    </div>
+
+    <!-- 2. 住宿須知 Modal -->
+    <div id="accommodation-modal" class="modal">
+        <div class="modal-content border-t-4 border-jp-red">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-jp-brown">秋葉苑 - 入住須知</h3>
+                <button onclick="closeAccommodationModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <div class="bg-red-50 p-3 rounded border border-red-100 mb-3">
+                <p class="font-bold text-jp-red mb-1 text-base">⚠️ 嚴重警告</p>
+                <ul class="list-decimal list-inside text-xs text-red-800 space-y-1 font-bold">
+                    <li>屋內嚴禁吸菸。</li>
+                    <li>千代田區垃圾分類極嚴格。</li>
+                </ul>
+            </div>
+            <div class="space-y-2 text-sm text-gray-700">
+                <p><strong>🕒 入住：</strong> 16:00 後</p>
+                <p><strong>🧳 寄存：</strong> 10:00 後</p>
+                <p><strong>🔑 退房：</strong> 10:00 前</p>
+            </div>
+            <button onclick="closeAccommodationModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">我已了解</button>
+        </div>
+    </div>
+
+    <script>
+        /* ---------------- 資料設定 (與前版相同，省略重複資料結構以節省長度，功能完全保留) ---------------- */
+        const spotsData = [
+            // --- 美食 (Food) ---
+            { name: "Chateraise PREMIUM YATSUDOKI Shiodome", type: "food", note: "甜點/蛋糕", map: "https://goo.gl/maps/search/Chateraise+PREMIUM+YATSUDOKI+Shiodome" },
+            { name: "川豊本店", type: "food", note: "成田鰻魚飯老店", map: "https://goo.gl/maps/search/川豊本店" },
+            { name: "鯛ごはん懐石 瓔珞", type: "food", note: "箱根鯛魚飯 (已訂位)", map: "https://goo.gl/maps/search/鯛ごはん懐石+瓔珞" },
+            { name: "まぐろとシャリ 浅草店", type: "food", note: "鮪魚丼飯", map: "https://goo.gl/maps/search/まぐろとシャリ+浅草店" },
+            { name: "TokyoSushiBowl", type: "food", note: "壽司丼", map: "https://goo.gl/maps/search/TokyoSushiBowl" },
+            { name: "Monmouth Tea", type: "food", note: "千馱谷奶茶專賣", map: "https://goo.gl/maps/search/Monmouth+Tea" },
+            { name: "Kenyan Shibuya (ケニヤン)", type: "food", note: "澀谷老牌紅茶店", map: "https://goo.gl/maps/search/Kenyan+Shibuya" },
+            { name: "Marlowe 布丁", type: "food", note: "橫須賀 Port Market 店", address: "6 Shinkocho, Yokosuka, Kanagawa 238-0005日本", map: "https://goo.gl/maps/search/Marlowe+Yokosuka" },
+            { name: "Tsunami", type: "food", note: "橫須賀海軍漢堡/咖哩", address: "日本〒238-0041 Kanagawa, Yokosuka, Honcho, 2 Chome-1-9 飯田ビル", map: "https://goo.gl/maps/search/Tsunami+Yokosuka" },
+            { name: "HONEY BEE", type: "food", note: "橫須賀美軍漢堡", address: "日本〒238-0041 Kanagawa, Yokosuka, Honcho, 2 Chome-１ 本町ビル 1F ハニービ", map: "https://goo.gl/maps/search/HONEY+BEE+Yokosuka" },
+            { name: "Wood Island Curry", type: "food", note: "橫須賀咖哩", map: "https://goo.gl/maps/search/Wood+Island+Yokosuka" },
+            { name: "牛たん 荒 新宿店", type: "food", note: "厚切牛舌", map: "https://goo.gl/maps/search/牛たん+荒+新宿" },
+            { name: "入鹿TOKYO 六本木", type: "food", note: "米其林推薦拉麵", map: "https://goo.gl/maps/search/入鹿TOKYO+六本木" },
+            { name: "Cafe La Boheme 新宿御苑", type: "food", note: "《你的名字》場景餐廳", map: "https://goo.gl/maps/search/Cafe+La+Boheme+Shinjyuku+gyoen" },
+            { name: "鉄板焼 浅草 KUDAKA", type: "food", note: "鐵板燒", map: "https://goo.gl/maps/search/鉄板焼+浅草+KUDAKA" },
+            { name: "うさぎやCAFÉ", type: "food", note: "上野銅鑼燒鬆餅", map: "https://goo.gl/maps/search/うさぎやCAFÉ" },
+            { name: "Café Lapin", type: "food", note: "上野復古咖啡廳", map: "https://goo.gl/maps/search/Café+Lapin" },
+            { name: "魚屋やまちゃん", type: "food", note: "海鮮居酒屋", map: "https://goo.gl/maps/search/魚屋やまちゃん" },
+            { name: "浅草牛光", type: "food", note: "淺草和牛", map: "https://goo.gl/maps/search/浅草牛光" },
+            { name: "鰻禅", type: "food", note: "淺草鰻魚飯", map: "https://goo.gl/maps/search/鰻禅" },
+            { name: "水喜 Mizuki", type: "food", note: "淺草土鍋飯", address: "3 Chome-16-11 Nishiasakusa, Taito City, Tokyo 111-0035日本", map: "https://goo.gl/maps/search/水喜+Mizuki" },
+            { name: "八十八浅草", type: "food", note: "抹茶專賣", map: "https://goo.gl/maps/search/八十八浅草" },
+            { name: "御菓子司 亀十", type: "food", note: "淺草銅鑼燒", map: "https://goo.gl/maps/search/御菓子司+亀十" },
+            { name: "PATISSERIE TEN&", type: "food", note: "銀座可麗露", map: "https://goo.gl/maps/search/PATISSERIE+TEN" },
+            // --- 購物 ---
+            { name: "RINKAN 西武新宿站店", type: "shopping", note: "二手精品", map: "https://goo.gl/maps/search/RINKAN+西武新宿", externalLink: "https://rinkan-online.com/products/10728-251019-0075" },
+            { name: "大涌谷くろたまご館", type: "shopping", note: "黑蛋紀念品", map: "https://goo.gl/maps/search/大涌谷くろたまご館" },
+            { name: "CBD SHOP -YANAGI-", type: "shopping", note: "澀谷本店 (CBN餅乾)", address: "日本〒150-0041 Tokyo, Shibuya, Jinnan, 1 Chome-12-16 1F 裏口", map: "https://goo.gl/maps/search/CBD+SHOP+YANAGI" },
+            { name: "Vivienne Westwood Man", type: "shopping", note: "表參道店", map: "https://goo.gl/maps/search/Vivienne+Westwood+Man+Omotesando" },
+            { name: "Vivienne Westwood Red Label", type: "shopping", note: "原宿/表參道", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-11-6 ラフォーレ原宿1F", map: "https://goo.gl/maps/search/Vivienne+Westwood+Red+Label" },
+            { name: "Closet Child", type: "shopping", note: "Vivienne 二手", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-7-6 Coxy176 ビル 101", map: "https://goo.gl/maps/search/Closet+Child+Vivienne" },
+            { name: "BEAMS 原宿 Annex", type: "shopping", note: "潮流服飾", map: "https://goo.gl/maps/search/BEAMS+Harajuku+Annex" },
+            { name: "GR8", type: "shopping", note: "原宿 Laforet 精選店", map: "https://goo.gl/maps/search/GR8+Harajuku" },
+            { name: "BEAMS JAPAN", type: "shopping", note: "新宿日本選物", address: "日本〒160-0022 Tokyo, Shinjuku City, Shinjuku, 3 Chome-32-6 B1F 5F", map: "https://goo.gl/maps/search/BEAMS+JAPAN" },
+            { name: "KITH TOKYO", type: "shopping", note: "澀谷宮下公園", map: "https://goo.gl/maps/search/KITH+TOKYO" },
+            { name: "伊勢丹メンズ館", type: "shopping", note: "新宿男士館", map: "https://goo.gl/maps/search/Isetan+Men's" },
+            { name: "HUMAN MADE 原宿", type: "shopping", note: "潮流品牌", map: "https://goo.gl/maps/search/HUMAN+MADE+Harajuku" },
+            { name: "HUMAN MADE OFFLINE STORE", type: "shopping", note: "中目黑/外苑前", map: "https://goo.gl/maps/search/HUMAN+MADE+OFFLINE+STORE" },
+            { name: "銀座カレン (Karen)", type: "shopping", note: "行李箱 (淺草/日本橋)", map: "https://goo.gl/maps/search/Ginza+Karen" },
+            { name: "自家製七味 松宮", type: "shopping", note: "巢鴨七味粉", map: "https://goo.gl/maps/search/Sugamo+Matsumiya" },
+            { name: "Acro Tokyo", type: "shopping", note: "原宿 Laforet", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-11-6 ラフォーレ原宿 B1F", map: "https://goo.gl/maps/search/Acro+Tokyo+Laforet" },
+            { name: "Nepenthes Tokyo", type: "shopping", note: "Needles 本店", map: "https://goo.gl/maps/search/Nepenthes+Tokyo" },
+            { name: "RINKAN 澀谷店", type: "shopping", note: "潮流二手", address: "日本〒150-0041 Tokyo, Shibuya, Jinnan, 1 Chome-12-16 和光 ビル 1F･2F", map: "https://goo.gl/maps/search/RINKAN+Shibuya", externalLink: "https://rinkan-online.com/products/10211-250729-0079" },
+            { name: "STUDIOUS", type: "shopping", note: "原宿/澀谷", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 4 Chome-26-32 1F", map: "https://goo.gl/maps/search/STUDIOUS+Tokyo" },
+            { name: "STUDIOUS TOKYO 表参道", type: "shopping", note: "原宿本店", map: "https://goo.gl/maps/search/STUDIOUS+TOKYO+Omotesando" },
+            // --- 景點 ---
+            { name: "淺草花筏", type: "sightseeing", note: "和服租借", map: "https://goo.gl/maps/search/Asakusa+Hanaikada" },
+            { name: "須賀神社 男段", type: "sightseeing", note: "《你的名字》階梯", map: "https://goo.gl/maps/search/Suga+Shrine+Stairs" },
+            { name: "聖橋 (Hijiri Bridge)", type: "sightseeing", note: "《鈴芽之旅》場景", map: "https://goo.gl/maps/search/Hijiri+Bridge" },
+            { name: "平和の鳥居", type: "sightseeing", note: "箱根神社水中鳥居", map: "https://goo.gl/maps/search/Heiwa+no+Torii" },
+            { name: "蘆之湖", type: "sightseeing", note: "箱根海賊船", map: "https://goo.gl/maps/search/Lake+Ashi" },
+            { name: "歌舞伎町一番街", type: "sightseeing", note: "新宿地標", map: "https://goo.gl/maps/search/Kabukicho+Ichibangai" },
+            { name: "YOKOSUKA 軍港巡航", type: "sightseeing", note: "橫須賀遊船", map: "https://goo.gl/maps/search/Yokosuka+Naval+Port+Cruise" },
+            { name: "外苑銀杏並木", type: "sightseeing", note: "明治神宮外苑", map: "https://goo.gl/maps/search/Meiji+Jingu+Gaiem+Ginkgo+Avenue" },
+            { name: "待乳山 本龍院", type: "sightseeing", note: "淺草能量景點", map: "https://goo.gl/maps/search/Matsuchiyama+Shoden" },
+            { name: "下北沢 SHELTER", type: "sightseeing", note: "《孤獨搖滾》Live House", map: "https://goo.gl/maps/search/Shimokitazawa+SHELTER" },
+            { name: "澀谷全向十字路口", type: "sightseeing", note: "Shibuya Crossing", map: "https://goo.gl/maps/search/Shibuya+Crossing" },
+            { name: "千躰子育地蔵菩薩", type: "sightseeing", note: "增上寺", map: "https://goo.gl/maps/search/Zojoji+Jizo" },
+            { name: "迎賓館赤坂離宮", type: "sightseeing", note: "西洋宮殿", map: "https://goo.gl/maps/search/Akasaka+Palace" },
+            { name: "皇居", type: "sightseeing", note: "二重橋", map: "https://goo.gl/maps/search/Imperial+Palace+Tokyo" },
+            { name: "成田山新勝寺", type: "sightseeing", note: "成田機場附近", map: "https://goo.gl/maps/search/Naritasan+Shinshoji" },
+            { name: "SHIBUYA SKY", type: "sightseeing", note: "澀谷高空展望台", map: "https://goo.gl/maps/search/SHIBUYA+SKY" },
+            { name: "明治神宮", type: "sightseeing", note: "原宿", map: "https://goo.gl/maps/search/Meiji+Jingu" },
+            { name: "KALEDOTOWER (待確認)", type: "sightseeing", note: "地點需確認", map: "https://www.google.com/maps" } 
+        ];
+
+        const shoppingList = [
+            // 藥妝保養
+            { category: "藥妝保養", name: "【plus eau】瀏海造型魔法棒", location: "Loft/Plaza/松本清", tag: "Drugstore" },
+            { category: "藥妝保養", name: "EVE止痛藥", location: "各藥妝店", tag: "Drugstore" },
+            { category: "藥妝保養", name: "Kiss me「睫毛定型液」", location: "各藥妝店/Donki", tag: "Drugstore" },
+            { category: "藥妝保養", name: "Melt髪化粧水", location: "Loft/Plaza", tag: "Drugstore" },
+            { category: "藥妝保養", name: "UHA味覺糖補鐵營養軟糖", location: "各藥妝店/超商", tag: "Drugstore" },
+            { category: "藥妝保養", name: "Cp-Lip 唇部精華液", location: "各藥妝店", tag: "Drugstore" },
+            { category: "藥妝保養", name: "SOFINA iP 精華乳霜", location: "松本清/專櫃", tag: "Drugstore" },
+            // 美瞳隱眼
+            { category: "美瞳隱眼", name: "隱眼 (BARRIEYES)", location: "Donki/BicContact", tag: "Contact" },
+            { category: "美瞳隱眼", name: "隱眼 (GAL NEVER DIE)", location: "Donki", tag: "Contact" },
+            { category: "美瞳隱眼", name: "隱眼 (NS COLLECTION)", location: "Donki", tag: "Contact" },
+            // 生活雜貨
+            { category: "生活雜貨/電器", name: "3coins微波爐烤盤", location: "3COINS", tag: "Variety" },
+            { category: "生活雜貨/電器", name: "recolte調理機", location: "Bic/Yodobashi", tag: "Variety" },
+            // 服飾配件
+            { category: "服飾配件", name: "靴下屋的保暖褲襪", location: "Tabio/靴下屋", tag: "Fashion" }
+        ];
+
+        let luggageItems = [
+            { id: 1, category: "3C", location: "大箱", item: "充電頭+線*2", note: "", checked: false },
+            { id: 2, category: "化妝、保養", location: "大箱", item: "化妝包", note: "", checked: false },
+            { id: 3, category: "化妝、保養", location: "大箱", item: "保養品", note: "雅漾、洗面乳、乳液、卸妝、隱眼", checked: false },
+            { id: 4, category: "化妝、保養", location: "大箱", item: "電棒", note: "", checked: false },
+            { id: 5, category: "衣物", location: "大箱", item: "靴子", note: "", checked: false },
+            { id: 6, category: "衣物", location: "大箱", item: "帽子", note: "", checked: false },
+            { id: 7, category: "衣物", location: "大箱", item: "固定髮夾", note: "", checked: false },
+            { id: 8, category: "衣物", location: "大箱", item: "褲襪", note: "", checked: false },
+            { id: 9, category: "衣物", location: "大箱", item: "睡衣", note: "", checked: false },
+            { id: 10, category: "雜物", location: "大箱", item: "護手霜", note: "", checked: false },
+            { id: 11, category: "化妝、保養", location: "登機箱", item: "鏡子", note: "", checked: false },
+            { id: 12, category: "化妝、保養", location: "登機箱", item: "香水", note: "", checked: false },
+            { id: 13, category: "化妝、保養", location: "登機箱", item: "小化妝包", note: "補妝用", checked: false },
+            { id: 14, category: "衣物", location: "登機箱", item: "厚外套", note: "", checked: false },
+            { id: 15, category: "雜物", location: "登機箱", item: "藥品", note: "", checked: false },
+            { id: 16, category: "雜物", location: "登機箱", item: "牙刷", note: "", checked: false },
+            { id: 17, category: "雜物", location: "登機箱", item: "暖暖包", note: "", checked: false },
+            { id: 18, category: "雜物", location: "登機箱", item: "行李秤", note: "", checked: false },
+            { id: 19, category: "3C", location: "隨身包", item: "耳機", note: "", checked: false },
+            { id: 20, category: "3C", location: "隨身包", item: "行動電源", note: "", checked: false },
+            { id: 21, category: "3C", location: "隨身包", item: "網卡", note: "", checked: false },
+            { id: 22, category: "3C", location: "隨身包", item: "自拍棒", note: "", checked: false },
+            { id: 23, category: "化妝、保養", location: "隨身包", item: "護唇膏", note: "", checked: false },
+            { id: 24, category: "化妝、保養", location: "隨身包", item: "梳子", note: "", checked: false },
+            { id: 25, category: "重要", location: "隨身包", item: "護照", note: "", checked: false },
+            { id: 26, category: "重要", location: "隨身包", item: "日幣", note: "", checked: false },
+            { id: 27, category: "重要", location: "隨身包", item: "提款卡", note: "", checked: false },
+            { id: 28, category: "雜物", location: "隨身包", item: "衛生紙", note: "", checked: false },
+            { id: 29, category: "雜物", location: "隨身包", item: "濕紙巾", note: "", checked: false },
+            { id: 30, category: "雜物", location: "大箱", item: "指甲剪", note: "", checked: false },
+        ];
+        let nextId = luggageItems.length + 1;
+
+        const itineraryDetails = {
+            day1: [
+                { time: "06:35", title: "抵達成田機場 T3", desc: "入境。", recommended: false },
+                { time: "08:13", title: "N'EX 成田特快", desc: "往新宿 (09:47 抵)。", recommended: false },
+                { time: "10:00", title: "小田急浪漫特快", desc: "往箱根湯本 (11:27 抵)。", recommended: false },
+                { 
+                    time: "12:15", 
+                    title: "午餐：鯛ごはん懐石 瓔珞", 
+                    desc: "★ 已訂位 12:15。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "はつ花そば 本店", note: "自然薯蕎麥麵", rating: "3.58", mapUrl: "https://goo.gl/maps/search/Hatsuhana+Soba+Hakone", inMap: false },
+                        { name: "湯葉丼 直吉", note: "湯葉丼", rating: "3.49", mapUrl: "https://goo.gl/maps/search/Yubadon+Naokichi", inMap: false }
+                    ]
+                },
+                { time: "13:00", title: "箱根經典環遊", desc: "登山電車/纜車/大湧谷。", recommended: false },
+                { time: "15:50", title: "箱根海賊船", desc: "桃源台→元箱根港。拍鳥居。", recommended: false },
+                { 
+                    time: "18:00", 
+                    title: "晚餐：箱根當地料理", 
+                    desc: "車站附近或飯店自助餐。", 
+                    recommended: false,
+                    diningOptions: [
+                         { name: "知客茶家", note: "豆腐/山藥", rating: "3.51", mapUrl: "https://goo.gl/maps/search/Shikajaya+Hakone", inMap: false },
+                         { name: "喜之助", note: "鮮魚居酒屋", rating: "3.49", mapUrl: "https://goo.gl/maps/search/Kinosuke+Hakone", inMap: false }
+                    ]
+                },
+                { time: "20:00", title: "溫泉 & 休息", desc: "入住 Hakone Pax Yoshino。", recommended: false }
+            ],
+            day2: [
+                { time: "09:30", title: "前往橫須賀", desc: "JR (11:04 抵)。", recommended: false },
+                { time: "12:00", title: "軍港巡航", desc: "★ 預約 12:00 船班。", recommended: false },
+                { 
+                    time: "13:00", 
+                    title: "午餐：HONEY BEE", 
+                    desc: "美軍漢堡。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "Tsunami", note: "海軍咖哩/漢堡", rating: "3.49", mapUrl: "https://goo.gl/maps/search/Tsunami+Yokosuka", inMap: true },
+                        { name: "Wood Island Curry", note: "橫須賀咖哩", rating: "3.48", mapUrl: "https://goo.gl/maps/search/Wood+Island+Yokosuka", inMap: true }
+                    ]
+                },
+                { time: "15:45", title: "前往東京民宿", desc: "秋葉原/末廣町。17:30 Check-in。", recommended: false },
+                { 
+                    time: "18:30", 
+                    title: "晚餐：入鹿TOKYO", 
+                    desc: "六本木拉麵。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "豚組食堂", note: "炸豬排", rating: "3.78", mapUrl: "https://goo.gl/maps/search/Butagumi+Shokudo", inMap: false },
+                        { name: "銀座 篝", note: "雞白湯拉麵", rating: "3.58", mapUrl: "https://goo.gl/maps/search/Ginza+Kagari+Roppongi", inMap: false }
+                    ]
+                },
+                { time: "20:30", title: "購物：Ginza Karen", desc: "人形町買行李箱。", recommended: false }
+            ],
+            day3: [
+                { time: "09:00", title: "皇居 (二重橋)", desc: "二重橋前站。", recommended: false },
+                { time: "10:30", title: "赤坂離宮", desc: "參觀本館/庭園。", recommended: false },
+                { 
+                    time: "12:30", 
+                    title: "午餐 & 銀杏並木", 
+                    desc: "明治神宮外苑銀杏祭。", 
+                    recommended: true, 
+                    recText: "推薦：Shake Shack",
+                    diningOptions: [
+                        { name: "Cafe La Boheme", note: "《你的名字》餐廳", rating: "3.45", mapUrl: "https://goo.gl/maps/search/Cafe+La+Boheme+Shinjyuku+gyoen", inMap: true },
+                        { name: "まい泉 青山", note: "炸豬排", rating: "3.58", mapUrl: "https://goo.gl/maps/search/Tonkatsu+Maisen+Aoyama", inMap: false }
+                    ]
+                },
+                { time: "14:30", title: "原宿 / 表參道", desc: "KITH, BEAMS, Human Made。", recommended: false },
+                { time: "16:00", title: "SHIBUYA SKY", desc: "★ 預約 16:00 日落。", recommended: false },
+                { time: "18:00", title: "澀谷 PARCO/Donki", desc: "任天堂, 藥妝。", recommended: false },
+                { 
+                    time: "19:30", 
+                    title: "晚餐：牛たん 荒", 
+                    desc: "厚切牛舌。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "Kenyan Shibuya", note: "紅茶/輕食", rating: "3.55", mapUrl: "https://goo.gl/maps/search/Kenyan+Shibuya", inMap: true },
+                        { name: "かつどん屋 瑞兆", note: "豬排丼", rating: "3.68", mapUrl: "https://goo.gl/maps/search/Katsudon-ya+Zuicho", inMap: false }
+                    ]
+                }
+            ],
+            day4: [
+                { time: "09:00", title: "淺草和服", desc: "淺草花筏。", recommended: false },
+                { time: "10:30", title: "淺草寺 / 雷門", desc: "拍照、逛街。", recommended: false },
+                { 
+                    time: "12:30", 
+                    title: "午餐：淺草美食", 
+                    desc: "和牛 / 土鍋飯 / 壽司。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "鰻禅", note: "鰻魚飯", rating: "3.80", mapUrl: "https://goo.gl/maps/search/Unazen+Asakusa", inMap: true },
+                        { name: "水喜 Mizuki", note: "土鍋飯", rating: "3.45", mapUrl: "https://goo.gl/maps/search/Mizuki+Asakusa", inMap: true }
+                    ]
+                },
+                { time: "14:30", title: "水上巴士", desc: "★ 預約：淺草 → 浜離宮。", recommended: false },
+                { time: "15:30", title: "東京鐵塔", desc: "芝公園/赤羽橋拍照。", recommended: false },
+                { 
+                    time: "17:30", 
+                    title: "銀座逛街 & 晚餐", 
+                    desc: "買可麗露，吃晚餐。", 
+                    recommended: true, 
+                    recText: "推薦：PATISSERIE TEN&",
+                    diningOptions: [
+                        { name: "銀座 篝 本店", note: "雞白湯", rating: "3.78", mapUrl: "https://goo.gl/maps/search/Ginza+Kagari", inMap: false },
+                        { name: "花山うどん", note: "寬烏龍麵", rating: "3.60", mapUrl: "https://goo.gl/maps/search/Hanayama+Udon+Ginza", inMap: false }
+                    ]
+                }
+            ],
+            day5: [
+                { time: "09:30", title: "退房", desc: "往東京站。", recommended: false },
+                { time: "10:00", title: "東京車站一番街", desc: "動漫街、伴手禮。", recommended: false },
+                { 
+                    time: "12:30", 
+                    title: "午餐：拉麵街/KITTE", 
+                    desc: "拉麵或壽司。", 
+                    recommended: false,
+                    diningOptions: [
+                        { name: "六厘舎", note: "沾麵", rating: "3.77", mapUrl: "https://goo.gl/maps/search/Rokurinsha+Tokyo+Station", inMap: false },
+                        { name: "つじ半", note: "海鮮珠寶盒", rating: "3.75", mapUrl: "https://goo.gl/maps/search/Tsujihan+Nihonbashi", inMap: false }
+                    ]
+                },
+                { time: "14:00", title: "前往機場 T1", desc: "N'EX (15:10 抵)。託運。", recommended: false },
+                { time: "15:40", title: "折返成田站", desc: "川豊本店抽號碼牌吃鰻魚。", recommended: true, recText: "推薦：川豊 本店" },
+                { time: "17:30", title: "返回機場 T1", desc: "京成成田 → T1。", recommended: false },
+                { time: "17:45", title: "免稅店", desc: "最後採買。", recommended: false },
+                { time: "19:55", title: "起飛", desc: "TR875。", recommended: false }
+            ]
+        };
+
+        // 頁面切換
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.content-section');
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navBtns.forEach(b => b.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.section).classList.add('active');
+            });
+        });
+
+        // 行程渲染
+        function renderItinerary(dayId, btnElement) {
+            if(btnElement) {
+                document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
+                btnElement.classList.add('active');
+            }
+
+            const container = document.getElementById('itinerary-content');
+            const details = itineraryDetails[dayId];
+            
+            let html = `<div class="timeline-container">`;
+            
+            let dayTitle = "";
+            if(dayId === 'day1') dayTitle = "12/5 (五) 箱根";
+            if(dayId === 'day2') dayTitle = "12/6 (六) 橫須賀/六本木";
+            if(dayId === 'day3') dayTitle = "12/7 (日) 澀谷/原宿";
+            if(dayId === 'day4') dayTitle = "12/8 (一) 淺草/銀座";
+            if(dayId === 'day5') dayTitle = "12/9 (二) 返程";
+
+            html += `<h3 class="text-lg md:text-xl font-bold text-jp-gold mb-4 border-b border-jp-gold/30 pb-2">${dayTitle}</h3>`;
+
+            details.forEach(item => {
+                let recBadge = item.recommended ? `<div class="recommend-tag">✨ ${item.recText || "推薦"}</div>` : '';
+                
+                let diningHtml = '';
+                if (item.diningOptions && item.diningOptions.length > 0) {
+                    diningHtml += `
+                        <div class="dining-list">
+                            <div class="dining-header">🍽️ 推薦</div>
+                    `;
+                    item.diningOptions.forEach(opt => {
+                        let mapBadge = opt.inMap ? `<span class="in-map-badge">地圖</span>` : '';
+                        let linkIcon = opt.externalLink ? `<a href="${opt.externalLink}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1">🔗</a>` : '';
+                        
+                        diningHtml += `
+                            <div class="dining-item">
+                                <div class="flex-grow">
+                                    <span class="dining-name-link">
+                                        <a href="${opt.mapUrl}" target="_blank" class="hover:text-jp-gold hover:underline flex items-center text-jp-brown">
+                                            ${opt.name}
+                                        </a>
+                                        ${mapBadge}
+                                        ${linkIcon}
+                                    </span>
+                                    <span class="dining-note">${opt.note}</span>
+                                </div>
+                                <span class="dining-rating">★${opt.rating}</span>
+                            </div>
+                        `;
+                    });
+                    diningHtml += `</div>`;
+                }
+
+                html += `
+                    <div class="detail-item">
+                        <div class="detail-time">${item.time}</div>
+                        <div class="detail-title">${item.title}</div>
+                        <div class="detail-desc">
+                            ${item.desc}
+                            ${recBadge}
+                            ${diningHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 地圖相關
+        const spotsListContainer = document.getElementById('spots-list-container');
+        const mapFrame = document.getElementById('map-frame');
+        const mapPlaceholder = document.getElementById('map-placeholder');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        function updateMap(spotName) {
+            const spot = spotsData.find(s => s.name === spotName);
+            let query = spotName + " 日本"; 
+            if (spot && spot.address) query = spot.address;
+            mapFrame.src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+            mapPlaceholder.style.display = 'none';
+            document.querySelectorAll('.spot-item').forEach(el => {
+                el.classList.remove('active-spot');
+                if (el.dataset.name === spotName) el.classList.add('active-spot');
+            });
+        }
+
+        function renderSpotsList(filter = 'all') {
+            spotsListContainer.innerHTML = '';
+            const filtered = filter === 'all' ? spotsData : spotsData.filter(s => s.type === filter);
+            
+            filtered.forEach(spot => {
+                let badgeColor = '';
+                let typeLabel = '';
+                switch(spot.type) {
+                    case 'food': badgeColor = 'bg-jp-red text-white'; typeLabel = '美食'; break;
+                    case 'shopping': badgeColor = 'bg-jp-gold text-white'; typeLabel = '購物'; break;
+                    case 'sightseeing': badgeColor = 'bg-jp-brown text-white'; typeLabel = '景點'; break;
+                }
+                const card = document.createElement('div');
+                card.className = "bg-white p-2 rounded border border-gray-200 spot-item";
+                card.dataset.name = spot.name;
+                card.onclick = (e) => { if(e.target.tagName !== 'A') updateMap(spot.name); };
+                
+                let linkHtml = spot.externalLink ? `<a href="${spot.externalLink}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1">🔗</a>` : '';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-jp-brown text-sm flex items-center">
+                            ${spot.name}
+                            ${linkHtml}
+                        </h4>
+                        <span class="text-xs px-1.5 py-0.5 rounded ${badgeColor} whitespace-nowrap ml-2">${typeLabel}</span>
+                    </div>
+                    <p class="text-xs text-gray-600">${spot.note}</p>
+                `;
+                spotsListContainer.appendChild(card);
+            });
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active', 'bg-jp-brown', 'text-white'));
+                btn.classList.add('active', 'bg-jp-brown', 'text-white');
+                renderSpotsList(btn.dataset.filter);
+            });
+        });
+
+        // 購物清單
+        const shoppingContainer = document.getElementById('shopping-list-container');
+        function renderShoppingList() {
+            const categories = {};
+            shoppingList.forEach(item => {
+                if(!categories[item.category]) categories[item.category] = [];
+                categories[item.category].push(item);
+            });
+            let html = '';
+            for (const [catName, items] of Object.entries(categories)) {
+                html += `<div><h3 class="shop-category">${catName}</h3><div class="space-y-1">`;
+                items.forEach((item, index) => {
+                    let tagClass = '';
+                    if(item.tag === 'Drugstore') tagClass = 'tag-drugstore';
+                    if(item.tag === 'Variety') tagClass = 'tag-variety';
+                    if(item.tag === 'Fashion') tagClass = 'tag-fashion';
+                    if(item.tag === 'Contact') tagClass = 'tag-contact';
+                    const uid = `shop-${catName}-${index}`;
+                    html += `
+                        <div class="shop-item" onclick="toggleShopItem(this)">
+                            <input type="checkbox" class="mt-1 mr-2 cursor-pointer" id="${uid}">
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <span class="font-bold text-jp-brown text-xs shop-name">${item.name}</span>
+                                    <span class="shop-tag ${tagClass}">${item.tag}</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">📍 ${item.location}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
+            shoppingContainer.innerHTML = html;
+        }
+
+        window.toggleShopItem = (el) => {
+            const checkbox = el.querySelector('input[type="checkbox"]');
+            if(event.target !== checkbox) checkbox.checked = !checkbox.checked;
+            el.classList.toggle('checked', checkbox.checked);
+        };
+
+        // 行李清單
+        const luggageContainer = document.getElementById('luggage-list-container');
+        function renderLuggage() {
+            luggageContainer.innerHTML = '';
+            const sorted = [...luggageItems].sort((a, b) => {
+                if(a.location !== b.location) return a.location.localeCompare(b.location, "zh-TW");
+                if(a.category !== b.category) return a.category.localeCompare(b.category, "zh-TW");
+                return a.checked - b.checked;
+            });
+            sorted.forEach(item => {
+                const badgeColor = item.category === '重要' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600';
+                let locColor = 'bg-gray-100 text-gray-800';
+                if (item.location === '大箱') locColor = 'bg-blue-100 text-blue-800 border border-blue-200';
+                else if (item.location === '登機箱') locColor = 'bg-green-100 text-green-800 border border-green-200';
+                else if (item.location === '隨身包') locColor = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+
+                luggageContainer.innerHTML += `
+                    <div class="flex items-start p-2 bg-gray-50 rounded border border-gray-100 hover:bg-white transition ${item.checked ? 'opacity-50' : ''}">
+                        <input type="checkbox" class="mt-1 mr-2 cursor-pointer" ${item.checked ? 'checked' : ''} onchange="toggleCheck(${item.id})">
+                        <div class="flex-grow">
+                            <div class="flex gap-1 mb-1">
+                                <span class="text-xs px-1.5 rounded ${locColor}">${item.location}</span>
+                                <span class="text-xs px-1.5 rounded ${badgeColor}">${item.category}</span>
+                            </div>
+                            <div class="font-medium text-sm text-jp-brown ${item.checked ? 'line-through' : ''}">${item.item}</div>
+                            ${item.note ? `<div class="text-xs text-gray-500 mt-0.5">📝 ${item.note}</div>` : ''}
+                        </div>
+                        <button onclick="openEdit(${item.id})" class="text-blue-400 hover:text-blue-600 mx-1">✏️</button>
+                        <button onclick="openDelete(${item.id})" class="text-red-400 hover:text-red-600 mx-1">🗑️</button>
+                    </div>
+                `;
+            });
+        }
+
+        // 行李 CRUD
+        document.getElementById('add-item-btn').addEventListener('click', () => {
+            const name = document.getElementById('new-item-input').value.trim();
+            if(!name) return;
+            luggageItems.push({
+                id: nextId++,
+                item: name,
+                category: document.getElementById('new-item-category').value,
+                location: document.getElementById('new-item-location').value,
+                note: document.getElementById('new-item-note').value,
+                checked: false
+            });
+            document.getElementById('new-item-input').value = '';
+            document.getElementById('new-item-note').value = '';
+            renderLuggage();
+        });
+
+        window.toggleCheck = (id) => {
+            const item = luggageItems.find(i => i.id === id);
+            if(item) { item.checked = !item.checked; renderLuggage(); }
+        };
+
+        const deleteModal = document.getElementById('delete-modal');
+        let itemToDeleteId = null;
+        window.openDelete = (id) => { itemToDeleteId = id; deleteModal.style.display = 'block'; };
+        window.confirmDelete = () => { if(itemToDeleteId !== null) { luggageItems = luggageItems.filter(i => i.id !== itemToDeleteId); renderLuggage(); } closeDeleteModal(); };
+        window.closeDeleteModal = () => { itemToDeleteId = null; deleteModal.style.display = 'none'; };
+
+        let currentEditId = null;
+        const editModal = document.getElementById('edit-modal');
+        window.openEdit = (id) => {
+            currentEditId = id;
+            const item = luggageItems.find(i => i.id === id);
+            document.getElementById('edit-item-name').value = item.item;
+            document.getElementById('edit-item-note').value = item.note;
+            const cats = ['雜物','3C','衣物','化妝、保養','重要'];
+            const locs = ['大箱','登機箱','隨身包'];
+            const catSelect = document.getElementById('edit-item-category');
+            catSelect.innerHTML = cats.map(c => `<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join('');
+            const locSelect = document.getElementById('edit-item-location');
+            locSelect.innerHTML = locs.map(l => `<option value="${l}" ${l===item.location?'selected':''}>${l}</option>`).join('');
+            editModal.style.display = 'block';
+        };
+        window.saveEdit = () => {
+            const item = luggageItems.find(i => i.id === currentEditId);
+            if(item) {
+                item.item = document.getElementById('edit-item-name').value;
+                item.category = document.getElementById('edit-item-category').value;
+                item.location = document.getElementById('edit-item-location').value;
+                item.note = document.getElementById('edit-item-note').value;
+                renderLuggage();
+                closeModal();
+            }
+        };
+        window.closeModal = () => { editModal.style.display = 'none'; };
+
+        const flightModal = document.getElementById('flight-modal');
+        window.openFlightModal = () => { flightModal.style.display = 'block'; };
+        window.closeFlightModal = () => { flightModal.style.display = 'none'; };
+
+        const accModal = document.getElementById('accommodation-modal');
+        window.openAccommodationModal = () => { accModal.style.display = 'block'; };
+        window.closeAccommodationModal = () => { accModal.style.display = 'none'; };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSpotsList('all');
+            renderLuggage();
+            renderShoppingList();
+            renderItinerary('day1', document.querySelector('.date-tab'));
+            updateMap('Tokyo Station');
+        });
+
+        window.onclick = function(e) {
+            if (e.target == editModal) closeModal();
+            if (e.target == accModal) closeAccommodationModal();
+            if (e.target == flightModal) closeFlightModal();
+            if (e.target == deleteModal) closeDeleteModal();
+        }
+    </script>
+</body>
+</html>
