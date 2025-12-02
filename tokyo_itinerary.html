@@ -730,6 +730,9 @@
                 user = u;
                 if (user) {
                     setupRealtimeListener();
+                    // Enable button visually when ready
+                    const btn = document.getElementById('add-item-btn');
+                    if(btn) btn.disabled = false;
                 }
             });
         }
@@ -745,19 +748,26 @@
                     ...doc.data()
                 }));
                 renderLuggage();
-                document.getElementById('sync-status').textContent = "已同步";
-                setTimeout(() => document.getElementById('sync-status').textContent = "雲端同步中", 3000);
+                const statusEl = document.getElementById('sync-status');
+                if(statusEl) {
+                    statusEl.textContent = "已同步";
+                    setTimeout(() => statusEl.textContent = "雲端同步中", 3000);
+                }
             }, (error) => {
                 console.error("Firestore Error:", error);
-                document.getElementById('luggage-list-container').innerHTML = `<div class="text-red-500 text-center text-sm p-4">無法載入清單，請稍後再試。</div>`;
+                const container = document.getElementById('luggage-list-container');
+                if(container) container.innerHTML = `<div class="text-red-500 text-center text-sm p-4">無法載入清單，請稍後再試。</div>`;
             });
         }
 
         // 2. CRUD Operations
         
-        // Add Item
-        window.addItemToFirestore = async () => {
-            if (!user) return;
+        // Add Item (Defined locally first to avoid reference errors)
+        const addItemToFirestore = async () => {
+            if (!user) {
+                alert("系統連線中，請稍候再試..."); 
+                return;
+            }
             const nameInput = document.getElementById('new-item-input');
             const catInput = document.getElementById('new-item-category');
             const locInput = document.getElementById('new-item-location');
@@ -794,7 +804,7 @@
         };
 
         // Toggle Checkbox
-        window.toggleCheck = async (docId, currentStatus) => {
+        const toggleCheck = async (docId, currentStatus) => {
             if (!user) return;
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'luggage_list', docId);
@@ -805,7 +815,7 @@
         };
 
         // Open Edit Modal
-        window.openEdit = (docId) => {
+        const openEdit = (docId) => {
             currentEditId = docId;
             const item = luggageItems.find(i => i.id === docId);
             if (!item) return;
@@ -826,7 +836,7 @@
         };
 
         // Save Edit
-        window.saveEdit = async () => {
+        const saveEdit = async () => {
             if (!user || !currentEditId) return;
             
             const newName = document.getElementById('edit-item-name').value;
@@ -842,7 +852,7 @@
                     location: newLoc,
                     note: newNote
                 });
-                closeModal();
+                window.closeModal(); // Use window.closeModal defined in the other script
             } catch (e) {
                 console.error("Update Error:", e);
                 alert("更新失敗");
@@ -850,12 +860,12 @@
         };
 
         // Delete Logic
-        window.openDelete = (docId) => {
+        const openDelete = (docId) => {
             itemToDeleteId = docId;
             document.getElementById('delete-modal').style.display = 'block';
         };
 
-        window.confirmDelete = async () => {
+        const confirmDelete = async () => {
             if (!user || !itemToDeleteId) return;
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'luggage_list', itemToDeleteId);
@@ -867,7 +877,7 @@
             }
         };
 
-        window.closeDeleteModal = () => {
+        const closeDeleteModal = () => {
             itemToDeleteId = null;
             document.getElementById('delete-modal').style.display = 'none';
         };
@@ -875,6 +885,7 @@
         // UI Renders
         function renderLuggage() {
             const container = document.getElementById('luggage-list-container');
+            if(!container) return;
             container.innerHTML = '';
             
             if (luggageItems.length === 0) {
@@ -915,8 +926,20 @@
             });
         }
 
+        // Export functions to window for HTML event handlers
+        window.addItemToFirestore = addItemToFirestore;
+        window.toggleCheck = toggleCheck;
+        window.openEdit = openEdit;
+        window.saveEdit = saveEdit;
+        window.openDelete = openDelete;
+        window.confirmDelete = confirmDelete;
+        window.closeDeleteModal = closeDeleteModal;
+
         // Event Listeners
-        document.getElementById('add-item-btn').addEventListener('click', addItemToFirestore);
+        const addBtn = document.getElementById('add-item-btn');
+        if(addBtn) {
+            addBtn.addEventListener('click', addItemToFirestore);
+        }
 
         // Init
         initApp();
