@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tokyo-trip-v2';
+const CACHE_NAME = 'tokyo-trip-v4.3.1';
 const urlsToCache = [
   './',
   './tokyo_itinerary.html',

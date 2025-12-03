@@ -1,6 +1,6 @@
 {
   "name": "東京5日遊",
-  "short_name": "東京之旅",
+  "short_name": "東京5日",
   "start_url": "./tokyo_itinerary.html",
   "display": "standalone",
   "background_color": "#FDFCF5",
