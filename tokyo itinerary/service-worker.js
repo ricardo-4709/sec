@@ -1,7 +1,7 @@
-const CACHE_NAME = 'tokyo-trip-v4.3.2';
+const CACHE_NAME = 'tokyo-trip-v4.3.3'; 
 const urlsToCache = [
-  './',
-  './tokyo_itinerary.html', // 確保這與您的 HTML 檔名一致
+  
+  './tokyo_itinerary.html', 
   './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap'
