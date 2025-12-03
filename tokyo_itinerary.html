@@ -367,10 +367,13 @@
                 <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="food">美食</button>
                 <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="shopping">購物</button>
                 <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="sightseeing">景點</button>
-                <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="nearest">📍 最近</button>
                 
-                <!-- 刷新定位按鈕 -->
-                <button id="refresh-loc-btn" onclick="refreshLocation()" class="hidden px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs hover:bg-gray-300 ml-2" title="刷新定位">🔄</button>
+                <!-- 將最近與刷新按鈕包在一起，避免手機版跑版 -->
+                <div class="flex gap-1">
+                    <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium whitespace-nowrap" data-filter="nearest">📍 最近</button>
+                    <!-- 刷新定位按鈕 -->
+                    <button id="refresh-loc-btn" onclick="refreshLocation()" class="hidden px-2 py-1 rounded bg-gray-200 text-gray-700 text-sm hover:bg-gray-300 transition" title="刷新定位">↻</button>
+                </div>
             </div>
             
             <!-- 手機版高度改為動態計算：減去更多空間給上方的過濾按鈕 (約 190px) -->
@@ -720,6 +723,7 @@
             { name: "八十八浅草", type: "food", note: "抹茶專賣", map: "https://goo.gl/maps/search/八十八浅草", lat: 35.7150, lng: 139.7980 },
             { name: "御菓子司 亀十", type: "food", note: "淺草銅鑼燒", map: "https://goo.gl/maps/search/御菓子司+亀十", lat: 35.7110, lng: 139.7970 },
             { name: "PATISSERIE TEN&", type: "food", note: "銀座可麗露", map: "https://goo.gl/maps/search/PATISSERIE+TEN", lat: 35.6720, lng: 139.7650 },
+            { name: "Marion Crepes Shibuya Modi", type: "food", note: "澀谷可麗餅", map: "https://www.google.com/maps/search/?api=1&query=Marion+Crepes+Shibuya+Modi", lat: 35.6604, lng: 139.7005 },
             
             // Shopping
             { name: "RINKAN 西武新宿站店", type: "shopping", note: "二手精品", map: "https://goo.gl/maps/search/RINKAN+西武新宿", externalLink: "https://rinkan-online.com/products/10728-251019-0075", lat: 35.6950, lng: 139.7010 },
@@ -1026,7 +1030,6 @@
             spotsListContainer.innerHTML = '';
             
             // Toggle refresh button visibility
-            // Show refresh button for any specific category too, to allow sorting
             const refreshBtn = document.getElementById('refresh-loc-btn');
             if (filter !== 'all') {
                 if(refreshBtn) refreshBtn.classList.remove('hidden');
@@ -1035,7 +1038,6 @@
             }
 
             // Logic to determine if we should sort by distance
-            // Requirement: "Categories except All"
             const shouldSortByDist = (filter !== 'all' && userLocation.lat !== null);
 
             let displayData = [];
@@ -1043,15 +1045,11 @@
             // 1. Filter Data
             if (filter === 'nearest') {
                 // Keep 'nearest' logic separate (filtering < 1km or closest)
-                // If we don't have location yet, prompt user
                 if (!userLocation.lat) {
                     spotsListContainer.innerHTML = '<div class="text-center p-4 text-gray-500">正在獲取您的位置...</div>';
                     refreshLocation(); // Try to auto-refresh
                     return;
                 }
-                
-                // If we have location, proceed to calculate and filter
-                // (Will handle in calculation block below)
                 displayData = spotsData; 
             } else {
                 displayData = filter === 'all' ? spotsData : spotsData.filter(s => s.type === filter);
@@ -1075,8 +1073,15 @@
 
             // 4. Sort by Distance if required (for category pages)
             if (shouldSortByDist && filter !== 'nearest') {
-                // Sort the filtered list
                 displayData.sort((a, b) => a.dist - b.dist);
+            } else if (filter === 'all') {
+                // Sort by Category then Alphabetically for 'all' category
+                const typeOrder = { 'food': 1, 'shopping': 2, 'sightseeing': 3 };
+                displayData.sort((a, b) => {
+                    const typeDiff = (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
+                    if (typeDiff !== 0) return typeDiff;
+                    return a.name.localeCompare(b.name, 'ja');
+                });
             }
             
             if (displayData.length === 0) {
