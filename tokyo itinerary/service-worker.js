@@ -1,7 +1,7 @@
-const CACHE_NAME = 'tokyo-trip-v1';
+const CACHE_NAME = 'tokyo-trip-v2';
 const urlsToCache = [
   './',
-  './index.html',
+  './tokyo_itinerary.html',
   './manifest.json',
   '[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)',
   '[https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap](https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap)'
