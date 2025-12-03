@@ -229,7 +229,8 @@
                         </div>
                     </div>
 
-                    <div id="luggage-list-container" class="space-y-1 max-h-[400px] overflow-y-auto pr-1">
+                    <!-- 修改這裡：max-h 改為 60vh (手機) 和 400px (桌機) -->
+                    <div id="luggage-list-container" class="space-y-1 max-h-[60vh] sm:max-h-[400px] overflow-y-auto pr-1">
                         <!-- Items rendered by JS -->
                     </div>
                 </div>
@@ -741,7 +742,9 @@
             { name: "RINKAN 澀谷店", type: "shopping", note: "潮流二手", address: "日本〒150-0041 Tokyo, Shibuya, Jinnan, 1 Chome-12-16 和光 ビル 1F･2F", map: "https://goo.gl/maps/search/RINKAN+Shibuya", externalLink: "https://rinkan-online.com/products/10211-250729-0079", lat: 35.6625, lng: 139.7000 },
             { name: "STUDIOUS", type: "shopping", note: "原宿/澀谷", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 4 Chome-26-32 1F", map: "https://goo.gl/maps/search/STUDIOUS+Tokyo", lat: 35.6680, lng: 139.7060 },
             { name: "STUDIOUS TOKYO 表参道", type: "shopping", note: "原宿本店", map: "https://goo.gl/maps/search/STUDIOUS+TOKYO+Omotesando", lat: 35.6660, lng: 139.7090 },
-            
+            { name: "Echiré Maison du Beurre", type: "shopping", note: "丸之內艾許奶油", map: "https://goo.gl/maps/search/Echiré+Maison+du+Beurre+Marunouchi", lat: 35.6784, lng: 139.7617 },
+            { name: "BUTTER 美瑛放牧酪農場", type: "shopping", note: "丸之內/奶油甜點", map: "https://www.google.com/maps/search/?api=1&query=BUTTER+美瑛放牧酪農場", lat: 35.6812, lng: 139.7641 },
+
             // Sightseeing
             { name: "淺草花筏", type: "sightseeing", note: "和服租借", map: "https://goo.gl/maps/search/Asakusa+Hanaikada", lat: 35.7120, lng: 139.7970 },
             { name: "須賀神社 男段", type: "sightseeing", note: "《你的名字》階梯", map: "https://goo.gl/maps/search/Suga+Shrine+Stairs", lat: 35.6850, lng: 139.7220 },
@@ -760,6 +763,7 @@
             { name: "成田山新勝寺", type: "sightseeing", note: "成田機場附近", map: "https://goo.gl/maps/search/Naritasan+Shinshoji", lat: 35.7860, lng: 140.3180 },
             { name: "SHIBUYA SKY", type: "sightseeing", note: "澀谷高空展望台", map: "https://goo.gl/maps/search/SHIBUYA+SKY", lat: 35.6585, lng: 139.7020 },
             { name: "明治神宮", type: "sightseeing", note: "原宿", map: "https://goo.gl/maps/search/Meiji+Jingu", lat: 35.6760, lng: 139.6990 },
+            { name: "浅草文化観光センター", type: "sightseeing", note: "眺望淺草寺", map: "https://goo.gl/maps/search/Asakusa+Culture+Tourist+Information+Center", lat: 35.7106, lng: 139.7965 },
             { name: "KALEDOTOWER (待確認)", type: "sightseeing", note: "地點需確認", map: "https://www.google.com/maps", lat: 35.6895, lng: 139.6917 } // default placeholder
         ];
 
@@ -924,7 +928,7 @@
             ],
             day4: [
                 { time: "09:00", title: "淺草和服", desc: "淺草花筏。", recommended: false },
-                { time: "10:30", title: "淺草寺 / 雷門", desc: "拍照、逛街。", recommended: false },
+                { time: "10:30", title: "淺草寺 / 雷門", desc: "拍照點：淺草寺正面階梯上去後兩旁的空間，人少也可以拍到淺草寺/雷門馬路對面/今戶神社、待乳山聖天(稍遠走路20分)。", recommended: false },
                 { 
                     time: "12:30", title: "午餐：淺草美食", desc: "和牛 / 土鍋飯 / 壽司。", recommended: false,
                     diningOptions: [
@@ -933,7 +937,7 @@
                     ]
                 },
                 { time: "14:30", title: "水上巴士", desc: "★ 預約：淺草 → 浜離宮。", recommended: false },
-                { time: "15:30", title: "東京鐵塔", desc: "芝公園/赤羽橋拍照。", recommended: false },
+                { time: "15:30", title: "東京鐵塔", desc: "拍照點：千軀子育地藏尊步道、豆腐屋停車場、KALEDOTOWER METRO從汐留-赤羽橋。", recommended: false },
                 { 
                     time: "17:30", title: "銀座逛街 & 晚餐", desc: "買可麗露，吃晚餐。", recommended: true, recText: "推薦：PATISSERIE TEN&",
                     diningOptions: [
