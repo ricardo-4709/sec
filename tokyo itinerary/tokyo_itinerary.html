@@ -118,20 +118,12 @@
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         .dist-badge { font-size: 0.65rem; background-color: #e5e7eb; color: #374151; padding: 2px 5px; border-radius: 999px; font-weight: bold; margin-left: auto; }
         .dist-near { background-color: #dcfce7; color: #166534; }
-        /* Update Notification */
-        #update-toast {
-            position: fixed; bottom: 20px; right: 20px; z-index: 200;
-            background-color: #594a4e; color: white; padding: 12px 20px;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: none; align-items: center; gap: 10px;
-            animation: slideUp 0.3s ease-out;
+        
+        /* About/Settings Modal Animation */
+        #about-modal .modal-content {
+            animation: zoomIn 0.3s ease-out;
         }
-        #update-toast button {
-            background-color: #D4AF37; color: white; border: none;
-            padding: 5px 12px; border-radius: 4px; font-size: 0.8rem;
-            cursor: pointer; font-weight: bold;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body class="font-serif">
@@ -139,7 +131,8 @@
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-center py-2">
                 <div class="mb-2">
-                    <h1 class="text-xl sm:text-2xl font-bold text-jp-brown tracking-widest border-b-2 border-jp-gold pb-1 px-4">TOKYO TRIP</h1>
+                    <!-- Modified H1: Clickable for Version Info -->
+                    <h1 onclick="openAboutModal()" class="cursor-pointer text-xl sm:text-2xl font-bold text-jp-brown tracking-widest border-b-2 border-jp-gold pb-1 px-4 hover:opacity-80 transition select-none" title="點擊查看版本">TOKYO TRIP</h1>
                 </div>
                 <div id="navbar-scroll-container" class="flex flex-nowrap justify-start sm:justify-center gap-1 w-full overflow-x-auto no-scrollbar px-1 pb-1 scroll-smooth">
                     <button class="nav-btn active" data-section="checklist">行前準備</button>
@@ -269,10 +262,24 @@
         </section>
     </main>
     
-    <!-- Auto Update Toast -->
-    <div id="update-toast">
-        <span>🚀 發現新版本！</span>
-        <button onclick="window.location.reload()">更新</button>
+    <!-- New About Modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content !max-w-sm text-center relative">
+            <h3 class="text-lg md:text-xl font-bold text-jp-brown mb-2">關於此應用程式</h3>
+            <p class="text-jp-gold font-serif text-2xl font-bold mb-2 tracking-widest">TOKYO TRIP</p>
+            <p id="version-display" class="text-sm text-gray-500 mb-6 font-mono">載入中...</p>
+            
+            <div id="update-status" class="mb-4 text-sm font-bold h-6 transition-all duration-300"></div>
+            
+            <div class="flex flex-col gap-3">
+                <button onclick="checkForUpdates()" class="w-full bg-jp-brown text-white py-3 rounded-lg hover:bg-gray-700 transition font-bold flex items-center justify-center gap-2 shadow-sm">
+                    <span>🔄</span> 檢查更新
+                </button>
+                <button onclick="closeAboutModal()" class="w-full bg-gray-100 text-gray-600 py-3 rounded-lg hover:bg-gray-200 transition font-bold">
+                    關閉
+                </button>
+            </div>
+        </div>
     </div>
 
     <div id="edit-modal" class="modal"><div class="modal-content"><h3 class="text-lg font-bold mb-4 text-jp-brown">編輯物品</h3><div class="space-y-3"><input id="edit-item-name" class="w-full p-2 border rounded text-sm" placeholder="名稱"><div class="flex gap-2"><select id="edit-item-category" class="w-1/2 p-2 border rounded text-sm bg-white"></select><select id="edit-item-location" class="w-1/2 p-2 border rounded text-sm bg-white"></select></div><input id="edit-item-note" class="w-full p-2 border rounded text-sm" placeholder="備註"><div class="flex justify-end gap-2 mt-4"><button onclick="closeModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded">取消</button><button onclick="saveEdit()" class="px-3 py-1.5 text-sm bg-jp-gold text-white rounded">儲存</button></div></div></div></div>
@@ -281,9 +288,12 @@
     <div id="accommodation-modal" class="modal"><div class="modal-content border-t-4 border-jp-red"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-jp-brown">秋葉苑 - 入住須知</h3><button onclick="closeAccommodationModal()" class="text-gray-400 hover:text-gray-600">✕</button></div><div class="bg-red-50 p-3 rounded border border-red-100 mb-3 space-y-2"><p class="font-bold text-jp-red text-base">⚠️ 嚴重警告 & 規定</p><ul class="list-decimal list-inside text-xs text-red-800 space-y-1 font-bold"><li>屋內嚴禁吸菸。</li><li>千代田區垃圾規定極嚴格，請務必遵照指南丟棄，違者自負法律責任。</li><li>請在到達前 1 小時通知。</li><li>若需晚上 7 點後入住，請提前預約。</li></ul></div><div class="space-y-3 text-sm text-gray-700 border-t pt-3 border-gray-100"><div><p class="font-bold text-jp-brown">🕒 入住時間</p><p>16:00 以後 (入住後請傳訊息告知)</p></div><div><p class="font-bold text-jp-brown">🧳 行李寄存</p><p>入住日 10:00 後可放入房內。</p><p class="text-xs text-gray-500">*請傳放好後的照片，並注意勿帶走鑰匙。</p></div><div><p class="font-bold text-jp-brown">🔑 退房時間</p><p>10:00 以前 (鑰匙放回鑰匙盒)</p><p class="text-xs text-red-500 font-bold mt-1">*無延遲退房服務，違者每小時罰款 5000 日圓。</p></div></div><button onclick="closeAccommodationModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">我已了解</button></div></div>
 
     <script>
+        const APP_VERSION = "v1.2.0";
         const defaultLuggageItems = [{id:1,category:"3C",location:"大箱",item:"充電頭+線*2",note:"",checked:false},{id:2,category:"化妝、保養",location:"大箱",item:"化妝包",note:"",checked:false},{id:3,category:"化妝、保養",location:"大箱",item:"保養品",note:"雅漾、洗面乳、乳液、卸妝、隱眼",checked:false},{id:4,category:"化妝、保養",location:"大箱",item:"電棒",note:"",checked:false},{id:5,category:"衣物",location:"大箱",item:"靴子",note:"",checked:false},{id:6,category:"衣物",location:"大箱",item:"帽子",note:"",checked:false},{id:7,category:"衣物",location:"大箱",item:"固定髮夾",note:"",checked:false},{id:8,category:"衣物",location:"大箱",item:"褲襪",note:"",checked:false},{id:9,category:"衣物",location:"大箱",item:"睡衣",note:"",checked:false},{id:10,category:"雜物",location:"大箱",item:"護手霜",note:"",checked:false},{id:11,category:"化妝、保養",location:"登機箱",item:"鏡子",note:"",checked:false},{id:12,category:"化妝、保養",location:"登機箱",item:"香水",note:"",checked:false},{id:13,category:"化妝、保養",location:"登機箱",item:"小化妝包",note:"補妝用",checked:false},{id:14,category:"衣物",location:"登機箱",item:"厚外套",note:"",checked:false},{id:15,category:"雜物",location:"登機箱",item:"藥品",note:"",checked:false},{id:16,category:"雜物",location:"登機箱",item:"牙刷",note:"",checked:false},{id:17,category:"雜物",location:"登機箱",item:"暖暖包",note:"",checked:false},{id:18,category:"雜物",location:"登機箱",item:"行李秤",note:"",checked:false},{id:19,category:"3C",location:"隨身包",item:"耳機",note:"",checked:false},{id:20,category:"3C",location:"隨身包",item:"行動電源",note:"",checked:false},{id:21,category:"3C",location:"隨身包",item:"網卡",note:"",checked:false},{id:22,category:"3C",location:"隨身包",item:"自拍棒",note:"",checked:false},{id:23,category:"化妝、保養",location:"隨身包",item:"護唇膏",note:"",checked:false},{id:24,category:"化妝、保養",location:"隨身包",item:"梳子",note:"",checked:false},{id:25,category:"重要",location:"隨身包",item:"護照",note:"",checked:false},{id:26,category:"重要",location:"隨身包",item:"日幣",note:"",checked:false},{id:27,category:"重要",location:"隨身包",item:"提款卡",note:"",checked:false},{id:28,category:"雜物",location:"隨身包",item:"衛生紙",note:"",checked:false},{id:29,category:"雜物",location:"隨身包",item:"濕紙巾",note:"",checked:false},{id:30,category:"雜物",location:"大箱",item:"指甲剪",note:"",checked:false}];
         const STORAGE_KEY = 'tokyo_trip_luggage_v1';
         let luggageItems = []; let currentEditId = null; let itemToDeleteId = null;
+        let globalRegistration = null; // Store Service Worker registration
+
         const navBtns = document.querySelectorAll('.nav-btn'); const sections = document.querySelectorAll('.content-section'); const spotsListContainer = document.getElementById('spots-list-container'); const mapFrame = document.getElementById('map-frame'); const mapPlaceholder = document.getElementById('map-placeholder'); const filterBtns = document.querySelectorAll('.filter-btn'); const shoppingContainer = document.getElementById('shopping-list-container'); const luggageContainer = document.getElementById('luggage-list-container'); const mainContent = document.getElementById('main-content');
 
         function initApp() {
@@ -863,12 +873,68 @@
         window.openAccommodationModal = () => { accModalEl.style.display = 'block'; };
         window.closeAccommodationModal = () => { accModalEl.style.display = 'none'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
+        
+        // About Modal Functions
+        window.openAboutModal = () => { 
+            const modal = document.getElementById('about-modal');
+            const versionDisplay = document.getElementById('version-display');
+            const statusEl = document.getElementById('update-status');
+            
+            versionDisplay.innerText = `版本: ${APP_VERSION}`;
+            statusEl.innerText = ''; 
+            modal.style.display = 'block'; 
+        };
+        window.closeAboutModal = () => { document.getElementById('about-modal').style.display = 'none'; };
+
+        // Check for updates function
+        window.checkForUpdates = async () => {
+            const statusEl = document.getElementById('update-status');
+            statusEl.innerText = '正在檢查更新...';
+            statusEl.className = 'mb-4 text-sm font-bold h-6 text-jp-gold';
+            
+            if (!globalRegistration) {
+                setTimeout(() => {
+                    statusEl.innerText = '⚠️ 無法連接更新伺服器 (開發模式)';
+                    statusEl.className = 'mb-4 text-sm font-bold h-6 text-gray-400';
+                }, 800);
+                return;
+            }
+
+            try {
+                await globalRegistration.update();
+                
+                // Check if a new worker is waiting (installed)
+                if (globalRegistration.waiting) {
+                     statusEl.innerText = '發現新版本！更新中...';
+                     globalRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                     // The controllerchange event will trigger reload
+                     return;
+                }
+                
+                // If the promise resolves and no new worker found immediately
+                setTimeout(() => {
+                     // Double check installing worker
+                     if (globalRegistration.installing) {
+                         statusEl.innerText = '正在下載新版本...';
+                     } else {
+                         statusEl.innerText = '目前已是最新版本 ✅';
+                         statusEl.className = 'mb-4 text-sm font-bold h-6 text-green-600';
+                     }
+                }, 1000);
+
+            } catch (err) {
+                console.error(err);
+                statusEl.innerText = '檢查失敗，請稍後再試';
+                statusEl.className = 'mb-4 text-sm font-bold h-6 text-red-500';
+            }
+        };
 
         window.onclick = function(e) {
             if (e.target == document.getElementById('edit-modal')) closeModal();
             if (e.target == accModalEl) closeAccommodationModal();
             if (e.target == flightModalEl) closeFlightModal();
             if (e.target == document.getElementById('delete-modal')) closeDeleteModal();
+            if (e.target == document.getElementById('about-modal')) closeAboutModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -884,28 +950,17 @@
                     navigator.serviceWorker.register('./service-worker.js')
                         .then(registration => {
                             console.log('ServiceWorker registered:', registration);
+                            globalRegistration = registration; // Store globally
 
-                            // 檢查是否有更新
-                            registration.addEventListener('updatefound', () => {
-                                const newWorker = registration.installing;
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // 顯示更新通知
-                                        const toast = document.getElementById('update-toast');
-                                        toast.style.display = 'flex';
-                                    }
-                                });
+                            // 監聽 controller 變化，實現自動重新整理
+                            let refreshing;
+                            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                                if (refreshing) return;
+                                window.location.reload();
+                                refreshing = true;
                             });
                         })
                         .catch(err => console.log('ServiceWorker registration failed:', err));
-                    
-                    // 監聽 controller 變化，實現自動重新整理
-                    let refreshing;
-                    navigator.serviceWorker.addEventListener('controllerchange', function () {
-                        if (refreshing) return;
-                        window.location.reload();
-                        refreshing = true;
-                    });
                 });
             }
         });
