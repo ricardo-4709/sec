@@ -329,7 +329,7 @@
         <section id="daily-itinerary" class="content-section bg-white rounded-2xl shadow-lg border border-jp-gold/20 overflow-hidden">
             <div class="flex flex-row h-[85vh] md:h-[650px]">
                 <!-- 日期選單 -->
-                <div class="w-20 md:w-1/4 bg-gray-50 border-r border-gray-200 flex flex-col overflow-y-auto no-scrollbar flex-shrink-0 z-10">
+                <div class="w-14 md:w-1/4 bg-gray-50 border-r border-gray-200 flex flex-col overflow-y-auto no-scrollbar flex-shrink-0 z-10">
                     <button class="date-tab active" onclick="renderItinerary('day1', this)">
                         <span class="day-num">12/5</span><span class="day-week">週五</span>
                     </button>
@@ -1182,7 +1182,7 @@
                     item.diningOptions.forEach(opt => {
                         let mapBadge = opt.inMap ? `<span class="in-map-badge">地圖</span>` : '';
                         let linkIcon = opt.externalLink ? `<a href="${opt.externalLink}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1">🔗</a>` : '';
-                        let priceTag = opt.price ? `<span class="text-xs text-gray-500 ml-2 bg-gray-100 px-1 rounded">💰 ${opt.price}</span>` : '';
+                        let priceTag = opt.price ? `<span class="text-[0.6rem] sm:text-xs text-gray-500 ml-1 sm:ml-2 bg-gray-100 px-1 rounded whitespace-nowrap">💰 ${opt.price}</span>` : '';
                         diningHtml += `<div class="dining-item"><div class="flex-grow"><span class="dining-name-link"><a href="${opt.mapUrl}" target="_blank" class="hover:text-jp-gold hover:underline flex items-center text-jp-brown">${opt.name}</a>${mapBadge}${linkIcon}${priceTag}</span><span class="dining-note">${opt.note}</span></div><span class="dining-rating">★${opt.rating}</span></div>`;
                     });
                     diningHtml += `</div>`;
