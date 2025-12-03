@@ -289,7 +289,7 @@
     <div id="accommodation-modal" class="modal"><div class="modal-content border-t-4 border-jp-red"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-jp-brown">秋葉苑 - 入住須知</h3><button onclick="closeAccommodationModal()" class="text-gray-400 hover:text-gray-600">✕</button></div><div class="bg-red-50 p-3 rounded border border-red-100 mb-3 space-y-2"><p class="font-bold text-jp-red text-base">⚠️ 嚴重警告 & 規定</p><ul class="list-decimal list-inside text-xs text-red-800 space-y-1 font-bold"><li>屋內嚴禁吸菸。</li><li>千代田區垃圾規定極嚴格，請務必遵照指南丟棄，違者自負法律責任。</li><li>請在到達前 1 小時通知。</li><li>若需晚上 7 點後入住，請提前預約。</li></ul></div><div class="space-y-3 text-sm text-gray-700 border-t pt-3 border-gray-100"><div><p class="font-bold text-jp-brown">🕒 入住時間</p><p>16:00 以後 (入住後請傳訊息告知)</p></div><div><p class="font-bold text-jp-brown">🧳 行李寄存</p><p>入住日 10:00 後可放入房內。</p><p class="text-xs text-gray-500">*請傳放好後的照片，並注意勿帶走鑰匙。</p></div><div><p class="font-bold text-jp-brown">🔑 退房時間</p><p>10:00 以前 (鑰匙放回鑰匙盒)</p><p class="text-xs text-red-500 font-bold mt-1">*無延遲退房服務，違者每小時罰款 5000 日圓。</p></div></div><button onclick="closeAccommodationModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">我已了解</button></div></div>
 
     <script>
-        const APP_VERSION = "v4.3.3";
+        const APP_VERSION = "v4.3.4";
         const defaultLuggageItems = [{id:1,category:"3C",location:"大箱",item:"充電頭+線*2",note:"",checked:false},{id:2,category:"化妝、保養",location:"大箱",item:"化妝包",note:"",checked:false},{id:3,category:"化妝、保養",location:"大箱",item:"保養品",note:"雅漾、洗面乳、乳液、卸妝、隱眼",checked:false},{id:4,category:"化妝、保養",location:"大箱",item:"電棒",note:"",checked:false},{id:5,category:"衣物",location:"大箱",item:"靴子",note:"",checked:false},{id:6,category:"衣物",location:"大箱",item:"帽子",note:"",checked:false},{id:7,category:"衣物",location:"大箱",item:"固定髮夾",note:"",checked:false},{id:8,category:"衣物",location:"大箱",item:"褲襪",note:"",checked:false},{id:9,category:"衣物",location:"大箱",item:"睡衣",note:"",checked:false},{id:10,category:"雜物",location:"大箱",item:"護手霜",note:"",checked:false},{id:11,category:"化妝、保養",location:"登機箱",item:"鏡子",note:"",checked:false},{id:12,category:"化妝、保養",location:"登機箱",item:"香水",note:"",checked:false},{id:13,category:"化妝、保養",location:"登機箱",item:"小化妝包",note:"補妝用",checked:false},{id:14,category:"衣物",location:"登機箱",item:"厚外套",note:"",checked:false},{id:15,category:"雜物",location:"登機箱",item:"藥品",note:"",checked:false},{id:16,category:"雜物",location:"登機箱",item:"牙刷",note:"",checked:false},{id:17,category:"雜物",location:"登機箱",item:"暖暖包",note:"",checked:false},{id:18,category:"雜物",location:"登機箱",item:"行李秤",note:"",checked:false},{id:19,category:"3C",location:"隨身包",item:"耳機",note:"",checked:false},{id:20,category:"3C",location:"隨身包",item:"行動電源",note:"",checked:false},{id:21,category:"3C",location:"隨身包",item:"網卡",note:"",checked:false},{id:22,category:"3C",location:"隨身包",item:"自拍棒",note:"",checked:false},{id:23,category:"化妝、保養",location:"隨身包",item:"護唇膏",note:"",checked:false},{id:24,category:"化妝、保養",location:"隨身包",item:"梳子",note:"",checked:false},{id:25,category:"重要",location:"隨身包",item:"護照",note:"",checked:false},{id:26,category:"重要",location:"隨身包",item:"日幣",note:"",checked:false},{id:27,category:"重要",location:"隨身包",item:"提款卡",note:"",checked:false},{id:28,category:"雜物",location:"隨身包",item:"衛生紙",note:"",checked:false},{id:29,category:"雜物",location:"隨身包",item:"濕紙巾",note:"",checked:false},{id:30,category:"雜物",location:"大箱",item:"指甲剪",note:"",checked:false}];
         const STORAGE_KEY = 'tokyo_trip_luggage_v1';
         let luggageItems = []; let currentEditId = null; let itemToDeleteId = null;
@@ -893,9 +893,22 @@
             statusEl.innerText = '正在檢查更新...';
             statusEl.className = 'mb-4 text-sm font-bold h-6 text-jp-gold';
             
+            // Preview Environment Check
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isHttps = window.location.protocol === 'https:';
+            const isPreview = window.location.protocol === 'file:' || window.location.protocol === 'blob:';
+
+            if (isPreview || (!isLocal && !isHttps)) {
+                setTimeout(() => {
+                    statusEl.innerText = '⚠️ 開發預覽模式不支援更新';
+                    statusEl.className = 'mb-4 text-sm font-bold h-6 text-gray-400';
+                }, 800);
+                return;
+            }
+
             if (!globalRegistration) {
                 setTimeout(() => {
-                    statusEl.innerText = '⚠️ 無法連接更新伺服器 (開發模式)';
+                    statusEl.innerText = '⚠️ 尚未連線至更新伺服器';
                     statusEl.className = 'mb-4 text-sm font-bold h-6 text-gray-400';
                 }, 800);
                 return;
@@ -916,7 +929,7 @@
 
             } catch (err) {
                 console.error(err);
-                statusEl.innerText = '檢查失敗，請稍後再試';
+                statusEl.innerText = '檢查失敗: ' + err.message; // 顯示具體錯誤
                 statusEl.className = 'mb-4 text-sm font-bold h-6 text-red-500';
             }
         };
@@ -936,8 +949,8 @@
             updateMap('Tokyo Station');
             initApp(); 
             
-            // 註冊 Service Worker
-            if ('serviceWorker' in navigator) {
+            // 註冊 Service Worker - 只在支援的環境下執行
+            if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
                 window.addEventListener('load', () => {
                     // **重要**: 這裡註冊的檔案名稱必須與您的實體檔案一致
                     navigator.serviceWorker.register('./service-worker.js')
@@ -945,8 +958,12 @@
                             console.log('ServiceWorker registered:', registration);
                             globalRegistration = registration; // Store globally
                         })
-                        .catch(err => console.log('ServiceWorker registration failed:', err));
+                        .catch(err => {
+                            console.error('ServiceWorker registration failed:', err);
+                        });
                 });
+            } else {
+                console.log('Service Worker not supported in this environment (file:// or blob:).');
             }
         });
     </script>

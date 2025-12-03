@@ -1,7 +1,6 @@
-const CACHE_NAME = 'tokyo-trip-v4.3.3'; 
+const CACHE_NAME = 'tokyo-trip-v4.3.4';
 const urlsToCache = [
-  
-  './tokyo_itinerary.html', 
+  './tokyo_itinerary.html', // 請確保這與您的 HTML 主檔案名稱完全一致
   './manifest.json',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Zen+Old+Mincho:wght@400;700&display=swap'
@@ -14,7 +13,11 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
+        console.log('[Service Worker] 正在快取資源...');
         return cache.addAll(urlsToCache);
+      })
+      .catch(err => {
+        console.error('[Service Worker] 快取失敗:', err);
       })
   );
 });
