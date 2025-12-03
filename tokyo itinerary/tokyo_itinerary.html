@@ -7,8 +7,6 @@
     
     <!-- PWA 相關設定 -->
     <meta name="theme-color" content="#FDFCF5">
-    <!-- 由於是單一檔案預覽，Manifest 與 Service Worker 暫時無法在預覽中運作，但不影響主功能 -->
-    <!-- <link rel="manifest" href="./manifest.json"> -->
     
     <!-- iOS 專用設定 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -125,6 +123,62 @@
             animation: zoomIn 0.3s ease-out;
         }
         @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Add Item Section Styles */
+        .add-form-group {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            /* Hidden by default for tab switching logic */
+            display: none; 
+            animation: fadeIn 0.3s ease-out;
+        }
+        .add-form-group.active {
+            display: block;
+        }
+        .add-form-label {
+            display: block;
+            font-weight: bold;
+            color: #594a4e;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #D4AF37;
+            padding-left: 0.5rem;
+        }
+        .add-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.2s;
+        }
+        .add-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            ring: 2px solid rgba(212, 175, 55, 0.2);
+        }
+        .add-tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 9999px;
+            color: #6b7280;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .add-tab-btn.active {
+            background-color: #594a4e;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="font-serif">
@@ -132,7 +186,6 @@
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-center py-2">
                 <div class="mb-2">
-                    <!-- Modified H1: Clickable for Version Info -->
                     <h1 onclick="openAboutModal()" class="cursor-pointer text-xl sm:text-2xl font-bold text-jp-brown tracking-widest border-b-2 border-jp-gold pb-1 px-4 hover:opacity-80 transition select-none" title="點擊查看版本">TOKYO TRIP</h1>
                 </div>
                 <div id="navbar-scroll-container" class="flex flex-nowrap justify-start sm:justify-center gap-1 w-full overflow-x-auto no-scrollbar px-1 pb-1 scroll-smooth">
@@ -141,6 +194,7 @@
                     <button class="nav-btn" data-section="daily-itinerary">每日行程</button>
                     <button class="nav-btn" data-section="map-list">旅程地圖</button>
                     <button class="nav-btn" data-section="shopping-list">購物清單</button>
+                    <button class="nav-btn border-jp-red text-jp-red font-bold" data-section="add-items">新增項目</button>
                 </div>
             </div>
         </div>
@@ -164,22 +218,141 @@
                         <div class="flex items-center gap-2"><h3 class="text-base font-bold text-jp-brown">行李清單</h3><span class="text-[0.6rem] text-jp-gold border border-jp-gold px-1 rounded">本機儲存 (離線可用)</span></div>
                         <div class="text-xs text-gray-500">可點擊編輯</div>
                     </div>
-                    <div class="mb-4 bg-gray-50 p-2 rounded border border-gray-100 flex flex-col gap-2">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <input id="new-item-input" type="text" placeholder="物品名稱" class="w-full sm:flex-grow p-2 border rounded text-sm focus:outline-none focus:border-jp-gold">
-                            <select id="new-item-category" class="w-full sm:w-auto p-2 border rounded text-sm bg-white"><option value="雜物">雜物</option><option value="3C">3C</option><option value="衣物">衣物</option><option value="化妝、保養">保養</option><option value="重要">重要</option></select>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <select id="new-item-location" class="w-full sm:w-1/3 p-2 border rounded text-sm bg-white"><option value="大箱">大箱</option><option value="登機箱">登機箱</option><option value="隨身包">隨身</option></select>
-                            <input id="new-item-note" type="text" placeholder="備註 (選填)" class="w-full sm:flex-grow p-2 border rounded text-sm">
-                            <button id="add-item-btn" onclick="addItem()" class="w-full sm:w-auto bg-jp-gold text-white hover:bg-yellow-600 px-4 py-2 sm:py-1 rounded text-sm transition font-bold">新增</button>
-                        </div>
-                    </div>
+                    <!-- 原本的新增欄位已移除，改至【新增項目】頁面 -->
+                    <div class="mb-2 text-xs text-gray-400 text-center border-b border-dashed pb-2">💡 如需新增物品，請至上方選單的「新增項目」頁面</div>
                     <div id="luggage-list-container" class="space-y-1 max-h-[60vh] sm:max-h-[400px] overflow-y-auto pr-1"></div>
                 </div>
             </div>
         </section>
+
+        <!-- Optimized Section: Add Items -->
+        <section id="add-items" class="content-section bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20 min-h-[500px]">
+            <h2 class="text-xl font-bold text-jp-brown mb-4 flex items-center justify-center"><span class="text-jp-gold mr-3">✦</span> 新增項目 <span class="text-jp-gold ml-3">✦</span></h2>
+            
+            <!-- App-like Tab Switcher -->
+            <div class="flex p-1 bg-gray-100 rounded-full mb-6 max-w-md mx-auto">
+                <button class="add-tab-btn active" onclick="switchAddTab('spot')">新增地點</button>
+                <button class="add-tab-btn" onclick="switchAddTab('shop')">新增購物</button>
+                <button class="add-tab-btn" onclick="switchAddTab('luggage')">新增行李</button>
+            </div>
+
+            <div class="max-w-md mx-auto">
+                <!-- 1. 新增地圖地點 Form -->
+                <div id="form-spot" class="add-form-group active border-l-4 border-l-jp-brown">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">地點名稱</label>
+                            <input id="add-spot-name" type="text" placeholder="例如：晴空塔" class="add-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">分類</label>
+                            <select id="add-spot-type" class="add-input bg-white h-10">
+                                <option value="food">美食 (紅)</option>
+                                <option value="shopping">購物 (金)</option>
+                                <option value="sightseeing">景點 (褐)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">備註</label>
+                            <input id="add-spot-note" type="text" placeholder="若空白將自動填寫" class="add-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">Google Map 連結 (選填)</label>
+                            <input id="add-spot-map" type="text" placeholder="https://goo.gl/maps/..." class="add-input text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">自訂連結 (選填)</label>
+                            <input id="add-spot-link" type="text" placeholder="官網、IG..." class="add-input text-xs">
+                        </div>
+                        <button onclick="addNewSpot()" class="w-full bg-jp-brown text-white py-3 rounded-lg hover:bg-gray-700 transition font-bold mt-2 shadow-sm">＋ 加入地圖列表</button>
+                    </div>
+                </div>
+
+                <!-- 2. 新增購物清單 Form -->
+                <div id="form-shop" class="add-form-group border-l-4 border-l-jp-gold">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">商品名稱</label>
+                            <input id="add-shop-name" type="text" placeholder="例如：合利他命" class="add-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">分類</label>
+                            <select id="add-shop-category" class="add-input bg-white h-10">
+                                <option value="藥妝保養">藥妝保養</option>
+                                <option value="生活雜貨/電器">生活雜貨/電器</option>
+                                <option value="服飾配件">服飾配件</option>
+                                <option value="零食伴手禮">零食伴手禮</option>
+                                <option value="美瞳隱眼">美瞳隱眼</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">購買地點</label>
+                            <div class="flex gap-1">
+                                <input id="add-shop-location" type="text" placeholder="若空白將自動填寫" class="add-input flex-grow mb-0">
+                                <button onclick="searchLocationForShop()" class="bg-gray-100 border border-gray-300 rounded px-3 text-sm hover:bg-gray-200 transition mb-2" title="Google搜尋地點名稱">🔎</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">標籤樣式</label>
+                            <select id="add-shop-tag" class="add-input bg-white h-10">
+                                <option value="Drugstore">Drugstore (紅)</option>
+                                <option value="Variety">Variety (黃)</option>
+                                <option value="Fashion">Fashion (藍)</option>
+                                <option value="Contact">Contact (粉)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">圖片連結 (選填)</label>
+                            <input id="add-shop-img" type="text" placeholder="https://..." class="add-input text-xs">
+                        </div>
+                         <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">備註 (選填)</label>
+                            <input id="add-shop-note" type="text" placeholder="型號/色號" class="add-input">
+                        </div>
+                        <button onclick="addNewShopItem()" class="w-full bg-jp-gold text-white py-3 rounded-lg hover:bg-yellow-600 transition font-bold mt-2 shadow-sm">＋ 加入購物清單</button>
+                    </div>
+                </div>
+
+                <!-- 3. 新增行李 Form -->
+                <div id="form-luggage" class="add-form-group border-l-4 border-l-gray-400">
+                    <div class="space-y-3">
+                         <div>
+                            <label class="text-xs font-bold text-jp-brown mb-1 block">物品名稱</label>
+                            <input id="new-item-input-add" type="text" placeholder="例如：太陽眼鏡" class="add-input">
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="w-1/2">
+                                <label class="text-xs font-bold text-jp-brown mb-1 block">分類</label>
+                                <select id="new-item-category-add" class="add-input bg-white h-10">
+                                    <option value="雜物">雜物</option>
+                                    <option value="3C">3C</option>
+                                    <option value="衣物">衣物</option>
+                                    <option value="化妝、保養">保養</option>
+                                    <option value="重要">重要</option>
+                                </select>
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-xs font-bold text-jp-brown mb-1 block">位置</label>
+                                <select id="new-item-location-add" class="add-input bg-white h-10">
+                                    <option value="大箱">大箱</option>
+                                    <option value="登機箱">登機箱</option>
+                                    <option value="隨身包">隨身</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 mb-1 block">備註 (選填)</label>
+                            <input id="new-item-note-add" type="text" placeholder="備註" class="add-input">
+                        </div>
+                        <button onclick="addItemFromTab()" class="w-full bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition font-bold mt-2 shadow-sm">＋ 加入行李清單</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="transport" class="content-section bg-white p-4 md:p-8 rounded-2xl shadow-lg border border-jp-gold/20">
+            <!-- (原交通住宿內容保持不變) -->
             <h2 class="text-xl font-bold text-jp-brown mb-4 md:mb-8 flex items-center justify-center"><span class="text-jp-gold mr-3">✦</span> 交通與住宿 <span class="text-jp-gold ml-3">✦</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 <div class="space-y-4">
@@ -189,7 +362,7 @@
                         <div class="text-sm space-y-1 opacity-90"><p>📅 入住：12/5 (週五)</p><p>💰 費用：NT$5,933</p><p class="text-jp-gold font-medium mt-1">♨️ 含溫泉設施，近箱根湯本站。</p></div>
                         <div class="mt-3 flex gap-2">
                             <a href="https://www.google.com/maps/search/?api=1&query=Hakone+Pax+Yoshino" target="_blank" class="flex-1 bg-white border border-jp-gold text-jp-gold text-center py-1.5 rounded text-sm font-bold hover:bg-jp-gold hover:text-white transition">📍 導航</a>
-                            <a href="#" target="_blank" class="flex-1 bg-jp-gold text-white text-center py-1.5 rounded text-sm font-bold hover:bg-yellow-600 transition">📄 入住憑證</a>
+                            <a href="https://drive.google.com/file/d/1kFCqkIJQaeTwhye7JWpecG2g66Il7S7n/view?usp=drive_link" target="_blank" class="flex-1 bg-jp-gold text-white text-center py-1.5 rounded text-sm font-bold hover:bg-yellow-600 transition">📄 入住憑證</a>
                         </div>
                     </div>
                     <div class="bg-jp-gold-light/20 p-4 rounded-lg border border-jp-red/30 hover:shadow-md transition relative overflow-hidden">
@@ -198,7 +371,7 @@
                         <div class="text-sm space-y-1 opacity-90"><p>📅 入住：12/6 - 12/8 (三晚)</p><p>📍 地址：千代田区外神田三丁目8-8</p><p>📞 電話：070-8333-3174</p></div>
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <a href="https://www.google.com/maps/search/?api=1&query=千代田区外神田三丁目8-8" target="_blank" class="bg-white border border-gray-400 text-gray-700 text-center py-1.5 rounded text-sm font-bold hover:bg-gray-100 transition">📍 導航</a>
-                            <a href="#" target="_blank" class="bg-blue-600 text-white text-center py-1.5 rounded text-sm font-bold hover:bg-blue-700 transition">📘 入住指南</a>
+                            <a href="https://fl-hotel.jp/wp-content/uploads/RAK-Self-Check-in-Instruction.pdf" target="_blank" class="bg-blue-600 text-white text-center py-1.5 rounded text-sm font-bold hover:bg-blue-700 transition">📘 入住指南</a>
                             <button onclick="openAccommodationModal()" class="col-span-2 border border-jp-red text-jp-red hover:bg-jp-red hover:text-white font-bold py-1.5 rounded transition duration-300 text-sm flex items-center justify-center"><span class="mr-2">⚠️</span> 查看詳細入住須知</button>
                         </div>
                     </div>
@@ -283,60 +456,74 @@
         </div>
     </div>
 
-    <div id="edit-modal" class="modal"><div class="modal-content"><h3 class="text-lg font-bold mb-4 text-jp-brown">編輯物品</h3><div class="space-y-3"><input id="edit-item-name" class="w-full p-2 border rounded text-sm" placeholder="名稱"><div class="flex gap-2"><select id="edit-item-category" class="w-1/2 p-2 border rounded text-sm bg-white"></select><select id="edit-item-location" class="w-1/2 p-2 border rounded text-sm bg-white"></select></div><input id="edit-item-note" class="w-full p-2 border rounded text-sm" placeholder="備註"><div class="flex justify-end gap-2 mt-4"><button onclick="closeModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded">取消</button><button onclick="saveEdit()" class="px-3 py-1.5 text-sm bg-jp-gold text-white rounded">儲存</button></div></div></div></div>
+    <!-- Modals -->
+    <div id="edit-modal" class="modal"><div class="modal-content"><h3 class="text-lg font-bold mb-4 text-jp-brown">編輯行李物品</h3><div class="space-y-3"><input id="edit-item-name" class="w-full p-2 border rounded text-sm" placeholder="名稱"><div class="flex gap-2"><select id="edit-item-category" class="w-1/2 p-2 border rounded text-sm bg-white"></select><select id="edit-item-location" class="w-1/2 p-2 border rounded text-sm bg-white"></select></div><input id="edit-item-note" class="w-full p-2 border rounded text-sm" placeholder="備註"><div class="flex justify-end gap-2 mt-4"><button onclick="closeModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded">取消</button><button onclick="saveEdit()" class="px-3 py-1.5 text-sm bg-jp-gold text-white rounded">儲存</button></div></div></div></div>
     <div id="delete-modal" class="modal"><div class="modal-content !max-w-sm text-center"><h3 class="text-lg font-bold mb-4 text-jp-brown">確定刪除此物品？</h3><div class="flex justify-center gap-4"><button onclick="closeDeleteModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded hover:bg-gray-300">取消</button><button onclick="confirmDelete()" class="px-3 py-1.5 text-sm bg-jp-red text-white rounded hover:bg-red-700">確定刪除</button></div></div></div>
-    <div id="flight-modal" class="modal"><div class="modal-content !max-w-2xl"><div class="flex justify-between items-center mb-4 border-b border-jp-gold/20 pb-2"><div><h3 class="text-lg font-bold text-jp-brown">航班詳細資訊</h3></div><button onclick="closeFlightModal()" class="text-gray-400 hover:text-gray-600 text-xl">×</button></div><div class="space-y-4 overflow-y-auto max-h-[60vh] pr-2"><div class="bg-gray-50 rounded-lg p-3 border border-gray-200"><div class="flex justify-between items-center mb-2"><span class="bg-jp-red text-white text-xs px-2 py-1 rounded font-bold">去程</span><span class="text-sm font-bold text-jp-brown">GK012</span></div><div class="flex justify-between items-center mb-2 text-center"><div><div class="text-xl font-bold text-jp-brown font-serif">02:30</div><div class="text-xs text-gray-500">TPE T1</div></div><div class="text-gray-300 text-xs">──✈──</div><div><div class="text-xl font-bold text-jp-brown font-serif">06:35</div><div class="text-xs text-gray-500">NRT T3</div></div></div></div><div class="bg-gray-50 rounded-lg p-3 border border-gray-200"><div class="flex justify-between items-center mb-2"><span class="bg-jp-brown text-white text-xs px-2 py-1 rounded font-bold">回程</span><span class="text-sm font-bold text-jp-brown">TR875</span></div><div class="flex justify-between items-center mb-2 text-center"><div><div class="text-xl font-bold text-jp-brown font-serif">19:55</div><div class="text-xs text-gray-500">NRT T1</div></div><div class="text-gray-300 text-xs">──✈──</div><div><div class="text-xl font-bold text-jp-brown font-serif">23:10</div><div class="text-xs text-gray-500">TPE T1</div></div></div></div></div><div class="mt-4 flex flex-col gap-2"><a href="#" target="_blank" class="block w-full bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition font-bold">📄 查看電子行程單</a><button onclick="closeFlightModal()" class="w-full mt-2 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">關閉</button></div></div></div>
+    
+    <!-- New: Shop Edit Modal -->
+    <div id="shop-edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-lg font-bold mb-4 text-jp-brown">編輯購物項目</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-gray-500">名稱</label>
+                    <input id="shop-edit-name" class="w-full p-2 border rounded text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">分類</label>
+                    <select id="shop-edit-category" class="w-full p-2 border rounded text-sm bg-white">
+                        <option value="藥妝保養">藥妝保養</option>
+                        <option value="生活雜貨/電器">生活雜貨/電器</option>
+                        <option value="服飾配件">服飾配件</option>
+                        <option value="零食伴手禮">零食伴手禮</option>
+                        <option value="美瞳隱眼">美瞳隱眼</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">購買地點</label>
+                    <input id="shop-edit-location" class="w-full p-2 border rounded text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">圖片連結</label>
+                    <input id="shop-edit-img" class="w-full p-2 border rounded text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">備註</label>
+                    <input id="shop-edit-note" class="w-full p-2 border rounded text-sm">
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button onclick="closeShopEditModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded">取消</button>
+                    <button onclick="saveShopEdit()" class="px-3 py-1.5 text-sm bg-jp-gold text-white rounded">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New: Shop Delete Modal -->
+    <div id="shop-delete-modal" class="modal">
+        <div class="modal-content !max-w-sm text-center">
+            <h3 class="text-lg font-bold mb-4 text-jp-brown">確定刪除此購物項目？</h3>
+            <div class="flex justify-center gap-4">
+                <button onclick="closeShopDeleteModal()" class="px-3 py-1.5 text-sm bg-gray-200 rounded hover:bg-gray-300">取消</button>
+                <button onclick="confirmShopDelete()" class="px-3 py-1.5 text-sm bg-jp-red text-white rounded hover:bg-red-700">確定刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="flight-modal" class="modal"><div class="modal-content !max-w-2xl"><div class="flex justify-between items-center mb-4 border-b border-jp-gold/20 pb-2"><div><h3 class="text-lg font-bold text-jp-brown">航班詳細資訊</h3></div><button onclick="closeFlightModal()" class="text-gray-400 hover:text-gray-600 text-xl">×</button></div><div class="space-y-4 overflow-y-auto max-h-[60vh] pr-2"><div class="bg-gray-50 rounded-lg p-3 border border-gray-200"><div class="flex justify-between items-center mb-2"><span class="bg-jp-red text-white text-xs px-2 py-1 rounded font-bold">去程</span><span class="text-sm font-bold text-jp-brown">GK012</span></div><div class="flex justify-between items-center mb-2 text-center"><div><div class="text-xl font-bold text-jp-brown font-serif">02:30</div><div class="text-xs text-gray-500">TPE T1</div></div><div class="text-gray-300 text-xs">──✈──</div><div><div class="text-xl font-bold text-jp-brown font-serif">06:35</div><div class="text-xs text-gray-500">NRT T3</div></div></div></div><div class="bg-gray-50 rounded-lg p-3 border border-gray-200"><div class="flex justify-between items-center mb-2"><span class="bg-jp-brown text-white text-xs px-2 py-1 rounded font-bold">回程</span><span class="text-sm font-bold text-jp-brown">TR875</span></div><div class="flex justify-between items-center mb-2 text-center"><div><div class="text-xl font-bold text-jp-brown font-serif">19:55</div><div class="text-xs text-gray-500">NRT T1</div></div><div class="text-gray-300 text-xs">──✈──</div><div><div class="text-xl font-bold text-jp-brown font-serif">23:10</div><div class="text-xs text-gray-500">TPE T1</div></div></div></div></div><div class="mt-4 flex flex-col gap-2"><a href="https://drive.google.com/file/d/1ceKVL8iBFr5vEEehSfgJVRKazmoc6PPP/view?usp=sharing" target="_blank" class="block w-full bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition font-bold">📄 查看電子行程單</a><button onclick="closeFlightModal()" class="w-full mt-2 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">關閉</button></div></div></div>
     <div id="accommodation-modal" class="modal"><div class="modal-content border-t-4 border-jp-red"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-jp-brown">秋葉苑 - 入住須知</h3><button onclick="closeAccommodationModal()" class="text-gray-400 hover:text-gray-600">✕</button></div><div class="bg-red-50 p-3 rounded border border-red-100 mb-3 space-y-2"><p class="font-bold text-jp-red text-base">⚠️ 嚴重警告 & 規定</p><ul class="list-decimal list-inside text-xs text-red-800 space-y-1 font-bold"><li>屋內嚴禁吸菸。</li><li>千代田區垃圾規定極嚴格，請務必遵照指南丟棄，違者自負法律責任。</li><li>請在到達前 1 小時通知。</li><li>若需晚上 7 點後入住，請提前預約。</li></ul></div><div class="space-y-3 text-sm text-gray-700 border-t pt-3 border-gray-100"><div><p class="font-bold text-jp-brown">🕒 入住時間</p><p>16:00 以後 (入住後請傳訊息告知)</p></div><div><p class="font-bold text-jp-brown">🧳 行李寄存</p><p>入住日 10:00 後可放入房內。</p><p class="text-xs text-gray-500">*請傳放好後的照片，並注意勿帶走鑰匙。</p></div><div><p class="font-bold text-jp-brown">🔑 退房時間</p><p>10:00 以前 (鑰匙放回鑰匙盒)</p><p class="text-xs text-red-500 font-bold mt-1">*無延遲退房服務，違者每小時罰款 5000 日圓。</p></div></div><button onclick="closeAccommodationModal()" class="w-full mt-4 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">我已了解</button></div></div>
 
     <script>
-        const APP_VERSION = "v4.3.5";
+        const APP_VERSION = "v4.6.0";
+        // LocalStorage Keys
+        const STORAGE_KEY_LUGGAGE = 'tokyo_trip_luggage_v1';
+        const STORAGE_KEY_SPOTS = 'tokyo_trip_spots_v1';
+        const STORAGE_KEY_SHOPPING = 'tokyo_trip_shopping_v1';
+
         const defaultLuggageItems = [{id:1,category:"3C",location:"大箱",item:"充電頭+線*2",note:"",checked:false},{id:2,category:"化妝、保養",location:"大箱",item:"化妝包",note:"",checked:false},{id:3,category:"化妝、保養",location:"大箱",item:"保養品",note:"雅漾、洗面乳、乳液、卸妝、隱眼",checked:false},{id:4,category:"化妝、保養",location:"大箱",item:"電棒",note:"",checked:false},{id:5,category:"衣物",location:"大箱",item:"靴子",note:"",checked:false},{id:6,category:"衣物",location:"大箱",item:"帽子",note:"",checked:false},{id:7,category:"衣物",location:"大箱",item:"固定髮夾",note:"",checked:false},{id:8,category:"衣物",location:"大箱",item:"褲襪",note:"",checked:false},{id:9,category:"衣物",location:"大箱",item:"睡衣",note:"",checked:false},{id:10,category:"雜物",location:"大箱",item:"護手霜",note:"",checked:false},{id:11,category:"化妝、保養",location:"登機箱",item:"鏡子",note:"",checked:false},{id:12,category:"化妝、保養",location:"登機箱",item:"香水",note:"",checked:false},{id:13,category:"化妝、保養",location:"登機箱",item:"小化妝包",note:"補妝用",checked:false},{id:14,category:"衣物",location:"登機箱",item:"厚外套",note:"",checked:false},{id:15,category:"雜物",location:"登機箱",item:"藥品",note:"",checked:false},{id:16,category:"雜物",location:"登機箱",item:"牙刷",note:"",checked:false},{id:17,category:"雜物",location:"登機箱",item:"暖暖包",note:"",checked:false},{id:18,category:"雜物",location:"登機箱",item:"行李秤",note:"",checked:false},{id:19,category:"3C",location:"隨身包",item:"耳機",note:"",checked:false},{id:20,category:"3C",location:"隨身包",item:"行動電源",note:"",checked:false},{id:21,category:"3C",location:"隨身包",item:"網卡",note:"",checked:false},{id:22,category:"3C",location:"隨身包",item:"自拍棒",note:"",checked:false},{id:23,category:"化妝、保養",location:"隨身包",item:"護唇膏",note:"",checked:false},{id:24,category:"化妝、保養",location:"隨身包",item:"梳子",note:"",checked:false},{id:25,category:"重要",location:"隨身包",item:"護照",note:"",checked:false},{id:26,category:"重要",location:"隨身包",item:"日幣",note:"",checked:false},{id:27,category:"重要",location:"隨身包",item:"提款卡",note:"",checked:false},{id:28,category:"雜物",location:"隨身包",item:"衛生紙",note:"",checked:false},{id:29,category:"雜物",location:"隨身包",item:"濕紙巾",note:"",checked:false},{id:30,category:"雜物",location:"大箱",item:"指甲剪",note:"",checked:false}];
-        const STORAGE_KEY = 'tokyo_trip_luggage_v1';
-        let luggageItems = []; let currentEditId = null; let itemToDeleteId = null;
-        let globalRegistration = null; // Store Service Worker registration
-
-        const navBtns = document.querySelectorAll('.nav-btn'); const sections = document.querySelectorAll('.content-section'); const spotsListContainer = document.getElementById('spots-list-container'); const mapFrame = document.getElementById('map-frame'); const mapPlaceholder = document.getElementById('map-placeholder'); const filterBtns = document.querySelectorAll('.filter-btn'); const shoppingContainer = document.getElementById('shopping-list-container'); const luggageContainer = document.getElementById('luggage-list-container'); const mainContent = document.getElementById('main-content');
-
-        function initApp() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) { try { luggageItems = JSON.parse(saved); } catch(e) { luggageItems = [...defaultLuggageItems]; } } else { luggageItems = [...defaultLuggageItems]; }
-            renderLuggage();
-        }
-        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(luggageItems)); renderLuggage(); }
-        function addItem() {
-            const name = document.getElementById('new-item-input').value.trim();
-            if (!name) return;
-            luggageItems.push({ id: Date.now(), item: name, category: document.getElementById('new-item-category').value, location: document.getElementById('new-item-location').value, note: document.getElementById('new-item-note').value, checked: false });
-            document.getElementById('new-item-input').value = ''; document.getElementById('new-item-note').value = '';
-            saveData();
-        }
-        function toggleCheck(id) { const item = luggageItems.find(i => i.id == id); if (item) { item.checked = !item.checked; saveData(); } }
-        function openEdit(id) {
-            currentEditId = id; const item = luggageItems.find(i => i.id == id); if (!item) return;
-            document.getElementById('edit-item-name').value = item.item; document.getElementById('edit-item-note').value = item.note || '';
-            const cats = ['雜物','3C','衣物','化妝、保養','重要']; const locs = ['大箱','登機箱','隨身包'];
-            document.getElementById('edit-item-category').innerHTML = cats.map(c => `<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join('');
-            document.getElementById('edit-item-location').innerHTML = locs.map(l => `<option value="${l}" ${l===item.location?'selected':''}>${l}</option>`).join('');
-            document.getElementById('edit-modal').style.display = 'block';
-        }
-        function saveEdit() {
-            const item = luggageItems.find(i => i.id == currentEditId);
-            if (item) { item.item = document.getElementById('edit-item-name').value; item.category = document.getElementById('edit-item-category').value; item.location = document.getElementById('edit-item-location').value; item.note = document.getElementById('edit-item-note').value; saveData(); closeModal(); }
-        }
-        function openDelete(id) { itemToDeleteId = id; document.getElementById('delete-modal').style.display = 'block'; }
-        function confirmDelete() { if (itemToDeleteId !== null) { luggageItems = luggageItems.filter(i => i.id != itemToDeleteId); saveData(); closeDeleteModal(); } }
-        function closeDeleteModal() { itemToDeleteId = null; document.getElementById('delete-modal').style.display = 'none'; }
-        function renderLuggage() {
-            if(!luggageContainer) return; luggageContainer.innerHTML = '';
-            if (luggageItems.length === 0) { luggageContainer.innerHTML = '<div class="text-center text-gray-400 text-sm p-4">清單目前是空的，請新增物品。</div>'; return; }
-            [...luggageItems].sort((a, b) => { if(a.location !== b.location) return a.location.localeCompare(b.location, "zh-TW"); if(a.category !== b.category) return a.category.localeCompare(b.category, "zh-TW"); return a.checked - b.checked; }).forEach(item => {
-                let locColor = 'bg-gray-100 text-gray-800'; if (item.location === '大箱') locColor = 'bg-blue-100 text-blue-800 border border-blue-200'; else if (item.location === '登機箱') locColor = 'bg-green-100 text-green-800 border border-green-200'; else if (item.location === '隨身包') locColor = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
-                const badgeColor = item.category === '重要' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600';
-                luggageContainer.innerHTML += `<div class="flex items-start p-2 bg-gray-50 rounded border border-gray-100 hover:bg-white transition ${item.checked ? 'opacity-50' : ''}"><input type="checkbox" class="mt-1 mr-2 cursor-pointer" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}')"><div class="flex-grow"><div class="flex gap-1 mb-1"><span class="text-xs px-1.5 rounded ${locColor}">${item.location}</span><span class="text-xs px-1.5 rounded ${badgeColor}">${item.category}</span></div><div class="font-medium text-sm text-jp-brown ${item.checked ? 'line-through' : ''}">${item.item}</div>${item.note ? `<div class="text-xs text-gray-500 mt-0.5">📝 ${item.note}</div>` : ''}</div><button onclick="openEdit('${item.id}')" class="text-blue-400 hover:text-blue-600 mx-1">✏️</button><button onclick="openDelete('${item.id}')" class="text-red-400 hover:text-red-600 mx-1">🗑️</button></div>`;
-            });
-        }
-
-        const spotsData = [
+        
+        const defaultSpotsData = [
             { name: "Chateraise PREMIUM YATSUDOKI Shiodome", type: "food", note: "甜點/蛋糕", map: "https://goo.gl/maps/search/Chateraise+PREMIUM+YATSUDOKI+Shiodome", lat: 35.6645, lng: 139.7588 },
             { name: "川豊本店", type: "food", note: "成田鰻魚飯老店", map: "https://goo.gl/maps/search/川豊本店", lat: 35.7796, lng: 140.3180 },
             { name: "鯛ごはん懐石 瓔珞", type: "food", note: "箱根鯛魚飯 (已訂位)", map: "https://goo.gl/maps/search/鯛ごはん懐石+瓔珞", lat: 35.2345, lng: 139.0980 },
@@ -405,7 +592,7 @@
             { name: "KALEDOTOWER (待確認)", type: "sightseeing", note: "地點需確認", map: "https://www.google.com/maps", lat: 35.6895, lng: 139.6917 }
         ];
 
-        const shoppingList = [
+        const defaultShoppingList = [
             { 
                 category: "藥妝保養", 
                 name: "【plus eau】瀏海造型魔法棒", 
@@ -602,12 +789,249 @@
             ]
         };
 
-        /* --- Location Helper Functions --- */
-        let userLocation = { lat: null, lng: null };
+        let luggageItems = []; 
+        let spotsData = []; 
+        let shoppingList = [];
+        let currentEditId = null; let itemToDeleteId = null;
+        let globalRegistration = null; // Store Service Worker registration
 
-        // Haversine formula to calculate distance (in km)
+        // New Variables for Shop Edit
+        let currentShopEditId = null; 
+        let currentShopDeleteId = null;
+        let userLocation = { lat: null, lng: null }; // Restore this
+
+        const navBtns = document.querySelectorAll('.nav-btn'); const sections = document.querySelectorAll('.content-section'); const spotsListContainer = document.getElementById('spots-list-container'); const mapFrame = document.getElementById('map-frame'); const mapPlaceholder = document.getElementById('map-placeholder'); const filterBtns = document.querySelectorAll('.filter-btn'); const shoppingContainer = document.getElementById('shopping-list-container'); const luggageContainer = document.getElementById('luggage-list-container'); const mainContent = document.getElementById('main-content');
+
+        function initApp() {
+            // Init Luggage
+            const savedLuggage = localStorage.getItem(STORAGE_KEY_LUGGAGE);
+            if (savedLuggage) { try { luggageItems = JSON.parse(savedLuggage); } catch(e) { luggageItems = [...defaultLuggageItems]; } } else { luggageItems = [...defaultLuggageItems]; }
+            renderLuggage();
+
+            // Init Spots
+            const savedSpots = localStorage.getItem(STORAGE_KEY_SPOTS);
+            if (savedSpots) { try { spotsData = JSON.parse(savedSpots); } catch(e) { spotsData = [...defaultSpotsData]; } } else { spotsData = [...defaultSpotsData]; }
+            
+            // Init Shopping
+            const savedShopping = localStorage.getItem(STORAGE_KEY_SHOPPING);
+            if (savedShopping) { try { shoppingList = JSON.parse(savedShopping); } catch(e) { shoppingList = [...defaultShoppingList]; } } else { shoppingList = [...defaultShoppingList]; }
+            // Ensure shopping items have IDs
+            shoppingList.forEach((item, index) => { if(!item.id) item.id = 'shop-' + Date.now() + '-' + index; });
+        }
+
+        // Data Savers
+        function saveData() { localStorage.setItem(STORAGE_KEY_LUGGAGE, JSON.stringify(luggageItems)); renderLuggage(); }
+        function saveSpots() { localStorage.setItem(STORAGE_KEY_SPOTS, JSON.stringify(spotsData)); renderSpotsList(document.querySelector('.filter-btn.active')?.dataset.filter || 'all'); }
+        function saveShopping() { localStorage.setItem(STORAGE_KEY_SHOPPING, JSON.stringify(shoppingList)); renderShoppingList(); }
+
+        // --- Tab Switching Logic for Add Items ---
+        function switchAddTab(tabName) {
+            // Update Buttons
+            document.querySelectorAll('.add-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.includes(tabName === 'spot' ? '地點' : (tabName === 'shop' ? '購物' : '行李'))) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update Forms
+            document.querySelectorAll('.add-form-group').forEach(form => form.classList.remove('active'));
+            document.getElementById(`form-${tabName}`).classList.add('active');
+        }
+
+        // --- Add Luggage Function (Now in New Page) ---
+        function addItemFromTab() {
+            const name = document.getElementById('new-item-input-add').value.trim();
+            if (!name) return;
+            luggageItems.push({ id: Date.now(), item: name, category: document.getElementById('new-item-category-add').value, location: document.getElementById('new-item-location-add').value, note: document.getElementById('new-item-note-add').value, checked: false });
+            document.getElementById('new-item-input-add').value = ''; document.getElementById('new-item-note-add').value = '';
+            alert('行李物品已新增！');
+            saveData();
+        }
+
+        // --- Add Spot Function (Updated with Enhanced Auto-fill) ---
+        function addNewSpot() {
+            const name = document.getElementById('add-spot-name').value.trim();
+            if (!name) { alert('請輸入地圖地點名稱'); return; }
+            
+            let note = document.getElementById('add-spot-note').value.trim();
+            const type = document.getElementById('add-spot-type').value;
+
+            // Auto-fill note logic (Enhanced)
+            if (!note) {
+                const n = name.toLowerCase();
+                // Specific Famous Spots Logic
+                if (n.includes('kenyan') || (n.includes('澀谷') && n.includes('紅茶'))) note = '澀谷老牌紅茶店';
+                else if (n.includes('shibuya sky') || n.includes('展望台')) note = '澀谷熱門高空觀景台';
+                else if (n.includes('shelter') || n.includes('須賀') || n.includes('你的名字') || n.includes('鈴芽') || n.includes('boheme')) note = '動漫電影取景聖地';
+                else if (n.includes('tonkatsu') || n.includes('炸豬排') || n.includes('まい泉')) note = '頂級炸豬排';
+                else if (n.includes('harbs') || n.includes('蛋糕') || n.includes('甜點') || n.includes('afternoon')) note = '人氣甜點下午茶';
+                else if (n.includes('牛舌') || n.includes('燒肉') || n.includes('敘敘苑')) note = '必吃日式燒肉';
+                else if (n.includes('拉麵') || n.includes('ramen') || n.includes('一蘭') || n.includes('六厘舎')) note = '排隊人氣拉麵';
+                else if (n.includes('壽司') || n.includes('sushi') || n.includes('美登利')) note = '新鮮直送壽司';
+                else if (n.includes('居酒屋') || n.includes('鳥貴族')) note = '道地日式居酒屋';
+                else if (n.includes('disney') || n.includes('迪士尼')) note = '夢幻樂園';
+                else if (n.includes('teamlab')) note = '沉浸式光影展';
+                else if (n.includes('donki') || n.includes('唐吉軻德') || n.includes('藥妝')) note = '24H 雜貨藥妝掃貨';
+                else if (n.includes('outlet') || n.includes('伊勢丹') || n.includes('parco') || n.includes('lumine')) note = '時尚購物中心';
+                else if (n.includes('神社') || n.includes('神宮') || n.includes('寺') || n.includes('淺草')) note = '歷史文化參拜';
+                else {
+                    // Fallback to Category
+                    switch(type) {
+                        case 'food': note = "Google 評分高分美食"; break;
+                        case 'shopping': note = "熱門購物商圈"; break;
+                        case 'sightseeing': note = "東京必訪打卡點"; break;
+                        default: note = "Google Maps 熱門地點";
+                    }
+                }
+            }
+            
+            const newSpot = {
+                name: name,
+                type: type,
+                note: note,
+                map: document.getElementById('add-spot-map').value || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`,
+                externalLink: document.getElementById('add-spot-link').value,
+                lat: 0, lng: 0 
+            };
+            
+            spotsData.push(newSpot);
+            saveSpots();
+            alert('新地點已加入地圖列表！');
+            document.getElementById('add-spot-name').value = '';
+            document.getElementById('add-spot-note').value = '';
+            document.getElementById('add-spot-map').value = '';
+            document.getElementById('add-spot-link').value = '';
+        }
+
+        // --- Add Shop Function ---
+        function addNewShopItem() {
+            const name = document.getElementById('add-shop-name').value.trim();
+            if (!name) { alert('請輸入商品名稱'); return; }
+
+            let location = document.getElementById('add-shop-location').value.trim();
+            const category = document.getElementById('add-shop-category').value;
+
+            // Auto-fill location logic
+            if (!location) {
+                switch(category) {
+                    case '藥妝保養': location = "各藥妝店 (松本清/大國)"; break;
+                    case '生活雜貨/電器': location = "Bic Camera / Yodobashi"; break;
+                    case '服飾配件': location = "百貨公司 / 商場"; break;
+                    case '零食伴手禮': location = "機場免稅店 / Donki"; break;
+                    case '美瞳隱眼': location = "Donki / BicContact"; break;
+                    default: location = "待確認";
+                }
+            }
+
+            const newShop = {
+                id: 'shop-' + Date.now(), // Generate ID
+                name: name,
+                category: category,
+                location: location,
+                tag: document.getElementById('add-shop-tag').value,
+                image: document.getElementById('add-shop-img').value,
+                note: document.getElementById('add-shop-note').value
+            };
+
+            shoppingList.push(newShop);
+            saveShopping();
+            alert('新商品已加入購物清單！');
+            document.getElementById('add-shop-name').value = '';
+            document.getElementById('add-shop-location').value = '';
+            document.getElementById('add-shop-img').value = '';
+            document.getElementById('add-shop-note').value = '';
+        }
+
+        function searchLocationForShop() {
+            const locName = document.getElementById('add-shop-location').value.trim();
+            if(locName) {
+                window.open(`https://www.google.com/maps/search/${encodeURIComponent(locName)}`, '_blank');
+            } else {
+                alert('請先輸入地點名稱');
+            }
+        }
+
+        // --- Shop Edit/Delete Functions ---
+        function openShopEdit(id) {
+            currentShopEditId = id;
+            const item = shoppingList.find(i => i.id === id);
+            if(!item) return;
+
+            document.getElementById('shop-edit-name').value = item.name;
+            document.getElementById('shop-edit-category').value = item.category;
+            document.getElementById('shop-edit-location').value = item.location;
+            document.getElementById('shop-edit-img').value = item.image || '';
+            document.getElementById('shop-edit-note').value = item.note || '';
+            document.getElementById('shop-edit-modal').style.display = 'block';
+        }
+
+        function closeShopEditModal() {
+            document.getElementById('shop-edit-modal').style.display = 'none';
+            currentShopEditId = null;
+        }
+
+        function saveShopEdit() {
+            const item = shoppingList.find(i => i.id === currentShopEditId);
+            if(item) {
+                item.name = document.getElementById('shop-edit-name').value;
+                item.category = document.getElementById('shop-edit-category').value;
+                item.location = document.getElementById('shop-edit-location').value;
+                item.image = document.getElementById('shop-edit-img').value;
+                item.note = document.getElementById('shop-edit-note').value;
+                saveShopping();
+                closeShopEditModal();
+            }
+        }
+
+        function openShopDelete(id) {
+            currentShopDeleteId = id;
+            document.getElementById('shop-delete-modal').style.display = 'block';
+        }
+
+        function closeShopDeleteModal() {
+            document.getElementById('shop-delete-modal').style.display = 'none';
+            currentShopDeleteId = null;
+        }
+
+        function confirmShopDelete() {
+            if(currentShopDeleteId) {
+                shoppingList = shoppingList.filter(i => i.id !== currentShopDeleteId);
+                saveShopping();
+                closeShopDeleteModal();
+            }
+        }
+
+        // --- Luggage Logic ---
+        function toggleCheck(id) { const item = luggageItems.find(i => i.id == id); if (item) { item.checked = !item.checked; saveData(); } }
+        function openEdit(id) {
+            currentEditId = id; const item = luggageItems.find(i => i.id == id); if (!item) return;
+            document.getElementById('edit-item-name').value = item.item; document.getElementById('edit-item-note').value = item.note || '';
+            const cats = ['雜物','3C','衣物','化妝、保養','重要']; const locs = ['大箱','登機箱','隨身包'];
+            document.getElementById('edit-item-category').innerHTML = cats.map(c => `<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join('');
+            document.getElementById('edit-item-location').innerHTML = locs.map(l => `<option value="${l}" ${l===item.location?'selected':''}>${l}</option>`).join('');
+            document.getElementById('edit-modal').style.display = 'block';
+        }
+        function saveEdit() {
+            const item = luggageItems.find(i => i.id == currentEditId);
+            if (item) { item.item = document.getElementById('edit-item-name').value; item.category = document.getElementById('edit-item-category').value; item.location = document.getElementById('edit-item-location').value; item.note = document.getElementById('edit-item-note').value; saveData(); closeModal(); }
+        }
+        function openDelete(id) { itemToDeleteId = id; document.getElementById('delete-modal').style.display = 'block'; }
+        function confirmDelete() { if (itemToDeleteId !== null) { luggageItems = luggageItems.filter(i => i.id != itemToDeleteId); saveData(); closeDeleteModal(); } }
+        function closeDeleteModal() { itemToDeleteId = null; document.getElementById('delete-modal').style.display = 'none'; }
+        function renderLuggage() {
+            if(!luggageContainer) return; luggageContainer.innerHTML = '';
+            if (luggageItems.length === 0) { luggageContainer.innerHTML = '<div class="text-center text-gray-400 text-sm p-4">清單目前是空的，請新增物品。</div>'; return; }
+            [...luggageItems].sort((a, b) => { if(a.location !== b.location) return a.location.localeCompare(b.location, "zh-TW"); if(a.category !== b.category) return a.category.localeCompare(b.category, "zh-TW"); return a.checked - b.checked; }).forEach(item => {
+                let locColor = 'bg-gray-100 text-gray-800'; if (item.location === '大箱') locColor = 'bg-blue-100 text-blue-800 border border-blue-200'; else if (item.location === '登機箱') locColor = 'bg-green-100 text-green-800 border border-green-200'; else if (item.location === '隨身包') locColor = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+                const badgeColor = item.category === '重要' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600';
+                luggageContainer.innerHTML += `<div class="flex items-start p-2 bg-gray-50 rounded border border-gray-100 hover:bg-white transition ${item.checked ? 'opacity-50' : ''}"><input type="checkbox" class="mt-1 mr-2 cursor-pointer" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}')"><div class="flex-grow"><div class="flex gap-1 mb-1"><span class="text-xs px-1.5 rounded ${locColor}">${item.location}</span><span class="text-xs px-1.5 rounded ${badgeColor}">${item.category}</span></div><div class="font-medium text-sm text-jp-brown ${item.checked ? 'line-through' : ''}">${item.item}</div>${item.note ? `<div class="text-xs text-gray-500 mt-0.5">📝 ${item.note}</div>` : ''}</div><button onclick="openEdit('${item.id}')" class="text-blue-400 hover:text-blue-600 mx-1">✏️</button><button onclick="openDelete('${item.id}')" class="text-red-400 hover:text-red-600 mx-1">🗑️</button></div>`;
+            });
+        }
+
+        // ... Restore Location Helpers ...
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius of the earth in km
+            const R = 6371;
             const dLat = deg2rad(lat2 - lat1);
             const dLon = deg2rad(lon2 - lon1);
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -631,8 +1055,8 @@
         function refreshLocation() {
             if (navigator.geolocation) {
                 const btn = document.getElementById('refresh-loc-btn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "⏳";
+                const originalText = btn.innerText; 
+                btn.innerText = "⏳";
                 
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -640,7 +1064,7 @@
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
                         };
-                        btn.innerHTML = originalText;
+                        btn.innerText = "↻"; 
                         // Refresh current list with new location data
                         const activeFilterBtn = document.querySelector('.filter-btn.active');
                         if(activeFilterBtn) {
@@ -649,7 +1073,7 @@
                         alert("定位已更新！");
                     },
                     (error) => {
-                        btn.innerHTML = originalText;
+                        btn.innerText = "↻";
                         alert("無法獲取位置: " + error.message);
                     }
                 );
@@ -658,7 +1082,6 @@
             }
         }
 
-        /* --- Updated Render Logic for Spots --- */
         function renderSpotsList(filter = 'all') {
             if(!spotsListContainer) return;
             spotsListContainer.innerHTML = '';
@@ -764,15 +1187,7 @@
             });
         }
 
-        /* --- Event Listeners --- */
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => { 
-                filterBtns.forEach(b => b.classList.remove('active', 'bg-jp-brown', 'text-white')); 
-                btn.classList.add('active', 'bg-jp-brown', 'text-white'); 
-                renderSpotsList(btn.dataset.filter); 
-            });
-        });
-
+        /* --- Event Listeners for Navigation --- */
         function scrollToNavBtn(btn) {
             const container = document.getElementById('navbar-scroll-container');
             const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
@@ -809,6 +1224,17 @@
             }
         }
 
+        /* --- Event Listeners for Filter Buttons --- */
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => { 
+                filterBtns.forEach(b => b.classList.remove('active', 'bg-jp-brown', 'text-white')); 
+                btn.classList.add('active', 'bg-jp-brown', 'text-white'); 
+                renderSpotsList(btn.dataset.filter); 
+            });
+        });
+
+        // --- Render Functions ---
+        // (Itinerary & Map functions remain same, omitted logic changes but kept data)
         function renderItinerary(dayId, btnElement) {
             if(btnElement) { document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active')); btnElement.classList.add('active'); }
             const container = document.getElementById('itinerary-content');
@@ -847,10 +1273,29 @@
             let html = '';
             for (const [catName, items] of Object.entries(categories)) {
                 html += `<div><h3 class="shop-category">${catName}</h3><div class="space-y-1">`;
-                items.forEach((item, index) => {
+                items.forEach((item) => {
                     let tagClass = ''; if(item.tag === 'Drugstore') tagClass = 'tag-drugstore'; if(item.tag === 'Variety') tagClass = 'tag-variety'; if(item.tag === 'Fashion') tagClass = 'tag-fashion'; if(item.tag === 'Contact') tagClass = 'tag-contact';
-                    const uid = `shop-${catName}-${index}`; let imgLink = item.image ? `<a href="${item.image}" target="_blank" class="text-blue-500 ml-1 text-xs" title="查看圖片">🖼️ 圖片</a>` : ''; let extLink = item.externalLink ? `<a href="${item.externalLink}" target="_blank" class="text-blue-500 ml-1 text-xs" title="店鋪查詢">🏬 店鋪</a>` : ''; let noteText = item.note ? `<div class="text-xs text-gray-500 mt-0.5">💡 ${item.note}</div>` : '';
-                    html += `<div class="shop-item" onclick="toggleShopItem(this)"><input type="checkbox" class="mt-1 mr-2 cursor-pointer" id="${uid}"><div class="flex-grow"><div class="flex justify-between items-start"><span class="font-bold text-jp-brown text-xs shop-name flex items-center flex-wrap gap-1">${item.name}${imgLink}${extLink}</span><span class="shop-tag ${tagClass}">${item.tag}</span></div><div class="text-xs text-gray-500 mt-1">📍 ${item.location}</div>${noteText}</div></div>`;
+                    const uid = item.id; 
+                    let imgLink = item.image ? `<a href="${item.image}" target="_blank" class="text-blue-500 ml-1 text-xs" title="查看圖片">🖼️ 圖片</a>` : ''; 
+                    let extLink = item.externalLink ? `<a href="${item.externalLink}" target="_blank" class="text-blue-500 ml-1 text-xs" title="店鋪查詢">🏬 店鋪</a>` : ''; 
+                    let noteText = item.note ? `<div class="text-xs text-gray-500 mt-0.5">💡 ${item.note}</div>` : '';
+                    
+                    html += `
+                    <div class="shop-item group relative" onclick="toggleShopItem(this)">
+                        <input type="checkbox" class="mt-1 mr-2 cursor-pointer" id="${uid}">
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-jp-brown text-xs shop-name flex items-center flex-wrap gap-1">${item.name}${imgLink}${extLink}</span>
+                                <span class="shop-tag ${tagClass}">${item.tag}</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">📍 ${item.location}</div>
+                            ${noteText}
+                        </div>
+                        <div class="flex ml-2 border-l pl-2 border-gray-100">
+                             <button onclick="event.stopPropagation(); openShopEdit('${item.id}')" class="text-blue-400 hover:text-blue-600 mx-1 p-1">✏️</button>
+                             <button onclick="event.stopPropagation(); openShopDelete('${item.id}')" class="text-red-400 hover:text-red-600 mx-1 p-1">🗑️</button>
+                        </div>
+                    </div>`;
                 });
                 html += `</div></div>`;
             }
@@ -859,8 +1304,7 @@
 
         window.toggleShopItem = (el) => {
             const checkbox = el.querySelector('input[type="checkbox"]');
-            // If user clicked directly on a link (A tag), do nothing here (let the link work)
-            if(event.target.tagName === 'A') return;
+            if(event.target.tagName === 'A' || event.target.tagName === 'BUTTON') return;
             
             if(event.target !== checkbox) checkbox.checked = !checkbox.checked;
             el.classList.toggle('checked', checkbox.checked);
@@ -893,7 +1337,6 @@
             statusEl.innerText = '正在檢查更新...';
             statusEl.className = 'mb-4 text-sm font-bold h-6 text-jp-gold';
             
-            // Preview Environment Check
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             const isHttps = window.location.protocol === 'https:';
             const isPreview = window.location.protocol === 'file:' || window.location.protocol === 'blob:';
@@ -916,20 +1359,17 @@
 
             try {
                 await globalRegistration.update();
-                
-                // If a new worker is found
                 if (globalRegistration.installing || globalRegistration.waiting) {
                       statusEl.innerText = '發現新版本！請重新整理頁面。';
                       statusEl.className = 'mb-4 text-sm font-bold h-6 text-green-600';
                       return;
                 }
-                
                 statusEl.innerText = '目前已是最新版本 ✅';
                 statusEl.className = 'mb-4 text-sm font-bold h-6 text-green-600';
 
             } catch (err) {
                 console.error(err);
-                statusEl.innerText = '檢查失敗: ' + err.message; // 顯示具體錯誤
+                statusEl.innerText = '檢查失敗: ' + err.message;
                 statusEl.className = 'mb-4 text-sm font-bold h-6 text-red-500';
             }
         };
@@ -940,30 +1380,27 @@
             if (e.target == flightModalEl) closeFlightModal();
             if (e.target == document.getElementById('delete-modal')) closeDeleteModal();
             if (e.target == document.getElementById('about-modal')) closeAboutModal();
+            if (e.target == document.getElementById('shop-edit-modal')) closeShopEditModal();
+            if (e.target == document.getElementById('shop-delete-modal')) closeShopDeleteModal();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initApp(); 
             renderSpotsList('all');
             renderShoppingList();
             renderItinerary('day1', document.querySelector('.date-tab'));
             updateMap('Tokyo Station');
-            initApp(); 
             
-            // 註冊 Service Worker - 只在支援的環境下執行
             if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
                 window.addEventListener('load', () => {
-                    // **重要**: 這裡註冊的檔案名稱必須與您的實體檔案一致
                     navigator.serviceWorker.register('./service-worker.js')
                         .then(registration => {
-                            console.log('ServiceWorker registered:', registration);
-                            globalRegistration = registration; // Store globally
+                            globalRegistration = registration;
                         })
                         .catch(err => {
                             console.error('ServiceWorker registration failed:', err);
                         });
                 });
-            } else {
-                console.log('Service Worker not supported in this environment (file:// or blob:).');
             }
         });
     </script>
