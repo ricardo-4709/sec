@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tokyo-trip-v4.3.4';
+const CACHE_NAME = 'tokyo-trip-v4.3.5';
 const urlsToCache = [
   './tokyo_itinerary.html', // 請確保這與您的 HTML 主檔案名稱完全一致
   './manifest.json',
