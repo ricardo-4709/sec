@@ -254,7 +254,7 @@
                         </div>
                         <div class="mt-3 flex gap-2">
                             <a href="https://www.google.com/maps/search/?api=1&query=Hakone+Pax+Yoshino" target="_blank" class="flex-1 bg-white border border-jp-gold text-jp-gold text-center py-1.5 rounded text-sm font-bold hover:bg-jp-gold hover:text-white transition">📍 導航</a>
-                            <a href="https://drive.google.com/file/d/1kFCqkIJQaeTwhye7JWpecG2g66Il7S7n/view?usp=drive_link" target="_blank" class="flex-1 bg-jp-gold text-white text-center py-1.5 rounded text-sm font-bold hover:bg-yellow-600 transition">📄 入住憑證</a>
+                            <a href="#" class="flex-1 bg-jp-gold text-white text-center py-1.5 rounded text-sm font-bold hover:bg-yellow-600 transition">📄 入住憑證</a>
                         </div>
                     </div>
 
@@ -269,7 +269,7 @@
                         </div>
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <a href="https://www.google.com/maps/search/?api=1&query=千代田区外神田三丁目8-8" target="_blank" class="bg-white border border-gray-400 text-gray-700 text-center py-1.5 rounded text-sm font-bold hover:bg-gray-100 transition">📍 導航</a>
-                            <a href="https://fl-hotel.jp/wp-content/uploads/RAK-Self-Check-in-Instruction.pdf" target="_blank" class="bg-blue-600 text-white text-center py-1.5 rounded text-sm font-bold hover:bg-blue-700 transition">📘 入住指南</a>
+                            <a href="#" class="bg-blue-600 text-white text-center py-1.5 rounded text-sm font-bold hover:bg-blue-700 transition">📘 入住指南</a>
                             <button onclick="openAccommodationModal()" class="col-span-2 border border-jp-red text-jp-red hover:bg-jp-red hover:text-white font-bold py-1.5 rounded transition duration-300 text-sm flex items-center justify-center">
                                 <span class="mr-2">⚠️</span> 查看詳細入住須知
                             </button>
@@ -365,7 +365,7 @@
                 <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="sightseeing">景點</button>
                 <button class="filter-btn px-3 py-1 rounded border border-jp-brown text-jp-brown hover:bg-jp-brown hover:text-white transition text-xs md:text-sm font-medium" data-filter="nearest">📍 最近</button>
                 
-                <!-- 刷新定位按鈕 (預設隱藏，切換到最近時顯示) -->
+                <!-- 刷新定位按鈕 -->
                 <button id="refresh-loc-btn" onclick="refreshLocation()" class="hidden px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs hover:bg-gray-300 ml-2" title="刷新定位">🔄</button>
             </div>
             
@@ -451,7 +451,7 @@
                 </div>
             </div>
             <div class="mt-4 flex flex-col gap-2">
-                <a href="https://drive.google.com/file/d/1ceKVL8iBFr5vEEehSfgJVRKazmoc6PPP/view?usp=sharing" target="_blank" class="block w-full bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition font-bold">📄 查看電子行程單</a>
+                <a href="#" class="block w-full bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition font-bold">📄 查看電子行程單</a>
                 <button onclick="closeFlightModal()" class="w-full mt-2 bg-jp-brown text-white py-2 rounded hover:bg-gray-700 transition">關閉</button>
             </div>
         </div>
@@ -703,7 +703,7 @@
             { name: "HONEY BEE", type: "food", note: "橫須賀美軍漢堡", address: "日本〒238-0041 Kanagawa, Yokosuka, Honcho, 2 Chome-１ 本町ビル 1F ハニービ", map: "https://goo.gl/maps/search/HONEY+BEE+Yokosuka", lat: 35.2815, lng: 139.6675 },
             { name: "Wood Island Curry", type: "food", note: "橫須賀咖哩", map: "https://goo.gl/maps/search/Wood+Island+Yokosuka", lat: 35.2820, lng: 139.6680 },
             { name: "牛たん 荒 新宿店", type: "food", note: "厚切牛舌", map: "https://goo.gl/maps/search/牛たん+荒+新宿", lat: 35.6900, lng: 139.7000 },
-            { name: "入鹿TOKYO 六本木", type: "food", note: "米其林推薦拉麵", map: "https://goo.gl/maps/search/入鹿TOKYO+六本木", lat: 35.6630, lng: 139.7320 },
+            { name: "tonkatsu.jp Omotesando", type: "food", note: "頂級炸豬排", map: "https://goo.gl/maps/search/tonkatsu.jp+Omotesando", lat: 35.6653, lng: 139.7115 },
             { name: "Cafe La Boheme 新宿御苑", type: "food", note: "《你的名字》場景餐廳", map: "https://goo.gl/maps/search/Cafe+La+Boheme+Shinjyuku+gyoen", lat: 35.6880, lng: 139.7100 },
             { name: "鉄板焼 浅草 KUDAKA", type: "food", note: "鐵板燒", map: "https://goo.gl/maps/search/鉄板焼+浅草+KUDAKA", lat: 35.7130, lng: 139.7950 },
             { name: "うさぎやCAFÉ", type: "food", note: "上野銅鑼燒鬆餅", map: "https://goo.gl/maps/search/うさぎやCAFÉ", lat: 35.7070, lng: 139.7730 },
@@ -760,19 +760,80 @@
         ];
 
         const shoppingList = [
-            { category: "藥妝保養", name: "【plus eau】瀏海造型魔法棒", location: "Loft/Plaza/松本清", tag: "Drugstore" },
-            { category: "藥妝保養", name: "EVE止痛藥", location: "各藥妝店", tag: "Drugstore" },
-            { category: "藥妝保養", name: "Kiss me「睫毛定型液」", location: "各藥妝店/Donki", tag: "Drugstore" },
-            { category: "藥妝保養", name: "Melt髪化粧水", location: "Loft/Plaza", tag: "Drugstore" },
-            { category: "藥妝保養", name: "UHA味覺糖補鐵營養軟糖", location: "各藥妝店/超商", tag: "Drugstore" },
-            { category: "藥妝保養", name: "Cp-Lip 唇部精華液", location: "各藥妝店", tag: "Drugstore" },
-            { category: "藥妝保養", name: "SOFINA iP 精華乳霜", location: "松本清/專櫃", tag: "Drugstore" },
+            { 
+                category: "藥妝保養", 
+                name: "【plus eau】瀏海造型魔法棒", 
+                location: "Loft/Plaza/松本清", 
+                tag: "Drugstore",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17H9zeSenqwoDIlq0Fq3Cx0FNVX707Aky8mIjjbaVjk0etTbXudJsTO1Jslbr3HCCl78VB3jrN51SgMFbUyFU2jq6DBWYINzcIXMF3xgrQbV4aWHfx_TOZKldd3_4MG5J5tIaDEf0QHPMQyJwQRrKxPykiPe?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "EVE止痛藥", 
+                location: "各藥妝店", 
+                tag: "Drugstore",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17GT1d0qAgZeaAjFDIBO7dCR6FPd_gjcCd9t0uwjXUTZ-ZZz3qi8iNC9G6PE5EJe4mS3mSPbUJNcnfiz4jtI1QxIoNV_Tq4wGb4VVRyWkCrrtoJ3PPMhrzAgXyRrSGePk7o97EieQvNU6QEeylWecvYvSHVz?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "Kiss me「睫毛定型液」", 
+                location: "各藥妝店/Donki", 
+                tag: "Drugstore",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17EsNLbYxOh3P5oIM61T6Rl_OEccpgv67w_3MHEjVkZlKee2e4-yE6TganNzMZtAsTmcT3r1JEaCJzEFa4IqaQd2j00OpKEByQmdYK9nrPF_0NEBiTGPhJU2vFpeiz8o9x3HZnwsBprIwoJzJkFWrP-rWhE?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "Melt髪化粧水", 
+                location: "Loft/Plaza", 
+                tag: "Drugstore",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17EPxa0HLPyzCgrDCW6_bRIuno2MmGOsXOH9InRsrTxgJijJc5SxSKNJqeMP-W_48BhbnlWZSBfWY5DJeAAWh-Ghs46cb0WCArXeVMExzfvURMFZxyR6gHvMyl-6ionGYtWFW-aW-y-B3Qn-8AIhrmIBQp4?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "UHA味覺糖補鐵營養軟糖", 
+                location: "各藥妝店/超商", 
+                tag: "Drugstore",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17GtFCsp-qhvAXjGJUd5zlv5vC3l15oRHhIZZmFMyzJgMtl3KKJNTAEzuQ0Uhk9mEpWS9GIb3_snAqNJH3_lb_LfsTgNsUtTN4zM4iadRZt0H61tNXITYEQ-kl6IGRNzbLm7ULAPxWeahg3-wFwNhiwVulYY?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "Cp-Lip 唇部精華液", 
+                location: "各藥妝店", 
+                tag: "Drugstore",
+                image: "https://sakurayala.com/cdn/shop/files/05931487-2AC4-43C4-B7E0-916429CD6E11.jpg?v=1763238799&width=600"
+            },
+            { 
+                category: "藥妝保養", 
+                name: "SOFINA iP 精華乳霜", 
+                location: "松本清/專櫃", 
+                tag: "Drugstore",
+                image: "https://kao-h.assetsadobe3.com/is/image/content/dam/sites/kao/web-sofina-com/hk/ip/v3/products/moisturecareshot/pc/products_img_v2.png?fmt=webp&wid=640"
+            },
             { category: "美瞳隱眼", name: "隱眼 (BARRIEYES)", location: "Donki/BicContact", tag: "Contact" },
             { category: "美瞳隱眼", name: "隱眼 (GAL NEVER DIE)", location: "Donki", tag: "Contact" },
             { category: "美瞳隱眼", name: "隱眼 (NS COLLECTION)", location: "Donki", tag: "Contact" },
-            { category: "生活雜貨/電器", name: "3coins微波爐烤盤", location: "3COINS", tag: "Variety" },
-            { category: "生活雜貨/電器", name: "recolte調理機", location: "Bic/Yodobashi", tag: "Variety" },
-            { category: "服飾配件", name: "靴下屋的保暖褲襪", location: "Tabio/靴下屋", tag: "Fashion" }
+            { 
+                category: "生活雜貨/電器", 
+                name: "3coins微波爐烤盤", 
+                location: "3COINS", 
+                tag: "Variety",
+                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17HhrA_pDoPeoM2hnoHJ5JF7KK3vSWSKSNs7k9jzKwIq7olB4JZXG3hz5irdB63CFSW3OXGYOhDdarWJQzHe101t6eDe5WcYFgfJqoySolhch6TXKH5B6u-XB0wOjGtj79O760rDViq6Mgi20QZm1etXcXgc?key=GIdYLBhCljRantezzAd-jA"
+            },
+            { 
+                category: "生活雜貨/電器", 
+                name: "recolte調理機", 
+                location: "Bic/Yodobashi", 
+                tag: "Variety",
+                image: "https://scontent.ftpe8-3.fna.fbcdn.net/v/t39.30808-6/486165925_1087625106734088_7696211871505451010_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=QU2VvGqj1Q0Q7kNvwEQGqhZ&_nc_oc=AdmcZlz5C0aDqepttXn7ABnLd_Oc08s9lIhYPv-1mq0qwZL82D9MAsgn6WAOawwyzZw&_nc_zt=23&_nc_ht=scontent.ftpe8-3.fna&_nc_gid=TWdy91AXSkEWGsKIX1Si-w&oh=00_AfkPeroTWMibA3pIbETwT9sC3Qa6EAEZEZlv3oOlwS4wpQ&oe=693578C0"
+            },
+            { 
+                category: "服飾配件", 
+                name: "靴下屋的保暖褲襪", 
+                location: "Tabio/靴下屋", 
+                tag: "Fashion",
+                note: "買80丹以下，推薦色號34",
+                externalLink: "https://tabio.com/jp/corporate/store/"
+            }
         ];
 
         const itineraryDetails = {
@@ -788,7 +849,12 @@
                     ]
                 },
                 { time: "13:00", title: "箱根經典環遊", desc: "登山電車/纜車/大湧谷。", recommended: false },
-                { time: "15:50", title: "箱根海賊船", desc: "桃源台→元箱根港。拍鳥居。", recommended: false },
+                { 
+                    time: "15:50", 
+                    title: "箱根海賊船", 
+                    desc: "桃源台→元箱根港。拍鳥居。<br><a href='https://lh7-rt.googleusercontent.com/sheetsz/AHOq17HFvazLjHEXiwMsrr15MIptcT4F1R98IdyXqGyX6Oq1zqvUJCv4Xy81p2TbuAWWa4sxxfIcWveuQBLolIF7Tjr-3SeFZldZKfc32f7KsX6DSUPM-J0Gv6cqVNCPKEYpIrtvtQagFA8SHXPKYPyTK5krfW8_?key=GIdYLBhCljRantezzAd-jA' target='_blank' class='text-blue-500 hover:underline font-bold inline-flex items-center mt-1'>🚢 時刻表</a>", 
+                    recommended: false 
+                },
                 { 
                     time: "18:00", title: "晚餐：箱根當地料理", desc: "車站附近或飯店自助餐。", recommended: false,
                     diningOptions: [
@@ -818,7 +884,7 @@
                     recommended: false 
                 },
                 { 
-                    time: "18:30", title: "晚餐：入鹿TOKYO", desc: "六本木拉麵。", recommended: false,
+                    time: "18:30", title: "晚餐：tonkatsu.jp Omotesando", desc: "頂級炸豬排 (需預約)。", recommended: true, recText: "推薦",
                     diningOptions: [
                         { name: "豚組食堂", note: "炸豬排", rating: "3.78", mapUrl: "https://goo.gl/maps/search/Butagumi+Shokudo", inMap: false },
                         { name: "銀座 篝", note: "雞白湯拉麵", rating: "3.58", mapUrl: "https://goo.gl/maps/search/Ginza+Kagari+Roppongi", inMap: false }
@@ -840,7 +906,7 @@
                 { 
                     time: "16:00", 
                     title: "SHIBUYA SKY", 
-                    desc: "★ 已購買 16:00 日落場次。<br><div class='mt-1 space-x-3'><a href='https://photos.app.goo.gl/6DxJ2CmoyrpvVNxF7' target='_blank' class='text-blue-500 hover:underline font-bold inline-flex items-center'>🎫 票券 1/2</a><a href='https://photos.app.goo.gl/QYpFLoH3j8ocDuy18' target='_blank' class='text-blue-500 hover:underline font-bold inline-flex items-center'>🎫 票券 2/2</a></div>", 
+                    desc: "★ 已購買 16:00 日落場次。<br><div class='mt-1 space-x-3'><a href='#' class='text-blue-500 hover:underline font-bold inline-flex items-center'>🎫 票券 1/2</a><a href='#' class='text-blue-500 hover:underline font-bold inline-flex items-center'>🎫 票券 2/2</a></div>", 
                     recommended: false 
                 },
                 { time: "18:00", title: "澀谷 PARCO/Donki", desc: "任天堂, 藥妝。", recommended: false },
@@ -929,10 +995,10 @@
                             lng: position.coords.longitude
                         };
                         btn.innerHTML = originalText;
-                        // If current filter is nearest, re-render
-                        const activeFilter = document.querySelector('.filter-btn.active');
-                        if(activeFilter && activeFilter.dataset.filter === 'nearest') {
-                            renderSpotsList('nearest');
+                        // Refresh current list with new location data
+                        const activeFilterBtn = document.querySelector('.filter-btn.active');
+                        if(activeFilterBtn) {
+                            renderSpotsList(activeFilterBtn.dataset.filter);
                         }
                         alert("定位已更新！");
                     },
@@ -952,47 +1018,62 @@
             spotsListContainer.innerHTML = '';
             
             // Toggle refresh button visibility
+            // Show refresh button for any specific category too, to allow sorting
             const refreshBtn = document.getElementById('refresh-loc-btn');
-            if (filter === 'nearest') {
+            if (filter !== 'all') {
                 if(refreshBtn) refreshBtn.classList.remove('hidden');
-                
-                // If we don't have location yet, try to get it
-                if (!userLocation.lat) {
-                    spotsListContainer.innerHTML = '<div class="text-center p-4 text-gray-500">正在獲取您的位置...</div>';
-                    refreshLocation();
-                    return;
-                }
             } else {
                 if(refreshBtn) refreshBtn.classList.add('hidden');
             }
 
+            // Logic to determine if we should sort by distance
+            // Requirement: "Categories except All"
+            const shouldSortByDist = (filter !== 'all' && userLocation.lat !== null);
+
             let displayData = [];
 
+            // 1. Filter Data
             if (filter === 'nearest') {
-                // Calculate distances
-                const dataWithDist = spotsData.map(spot => {
-                    const dist = calculateDistance(userLocation.lat, userLocation.lng, spot.lat, spot.lng);
-                    return { ...spot, dist };
-                });
-
-                // Sort by distance
-                dataWithDist.sort((a, b) => a.dist - b.dist);
-
-                // Filter logic: < 1km OR closest one
-                const nearSpots = dataWithDist.filter(s => s.dist <= 1.0);
-                
-                if (nearSpots.length > 0) {
-                    displayData = nearSpots;
-                } else {
-                    // Show at least the closest one
-                    displayData = [dataWithDist[0]];
+                // Keep 'nearest' logic separate (filtering < 1km or closest)
+                // If we don't have location yet, prompt user
+                if (!userLocation.lat) {
+                    spotsListContainer.innerHTML = '<div class="text-center p-4 text-gray-500">正在獲取您的位置...</div>';
+                    refreshLocation(); // Try to auto-refresh
+                    return;
                 }
+                
+                // If we have location, proceed to calculate and filter
+                // (Will handle in calculation block below)
+                displayData = spotsData; 
             } else {
                 displayData = filter === 'all' ? spotsData : spotsData.filter(s => s.type === filter);
             }
+
+            // 2. Calculate Distances (always do this if loc exists, so badges show up)
+            if (userLocation.lat) {
+                displayData = displayData.map(spot => {
+                    const dist = calculateDistance(userLocation.lat, userLocation.lng, spot.lat, spot.lng);
+                    return { ...spot, dist };
+                });
+            }
+
+            // 3. Special handling for 'nearest' filter logic (filtering)
+            if (filter === 'nearest' && userLocation.lat) {
+                displayData.sort((a, b) => a.dist - b.dist);
+                const nearSpots = displayData.filter(s => s.dist <= 1.0);
+                if (nearSpots.length > 0) displayData = nearSpots;
+                else displayData = [displayData[0]]; // fallback to closest
+            }
+
+            // 4. Sort by Distance if required (for category pages)
+            if (shouldSortByDist && filter !== 'nearest') {
+                // Sort the filtered list
+                displayData.sort((a, b) => a.dist - b.dist);
+            }
             
-            if (displayData.length === 0 && filter === 'nearest') {
-                 spotsListContainer.innerHTML = '<div class="text-center p-4 text-gray-500">附近沒有找到地點。</div>';
+            if (displayData.length === 0) {
+                 const msg = (filter === 'nearest') ? "附近沒有找到地點。" : "此分類沒有資料。";
+                 spotsListContainer.innerHTML = `<div class="text-center p-4 text-gray-500">${msg}</div>`;
                  return;
             }
 
@@ -1131,7 +1212,31 @@
                     let tagClass = '';
                     if(item.tag === 'Drugstore') tagClass = 'tag-drugstore'; if(item.tag === 'Variety') tagClass = 'tag-variety'; if(item.tag === 'Fashion') tagClass = 'tag-fashion'; if(item.tag === 'Contact') tagClass = 'tag-contact';
                     const uid = `shop-${catName}-${index}`;
-                    html += `<div class="shop-item" onclick="toggleShopItem(this)"><input type="checkbox" class="mt-1 mr-2 cursor-pointer" id="${uid}"><div class="flex-grow"><div class="flex justify-between items-start"><span class="font-bold text-jp-brown text-xs shop-name">${item.name}</span><span class="shop-tag ${tagClass}">${item.tag}</span></div><div class="text-xs text-gray-500 mt-1">📍 ${item.location}</div></div></div>`;
+                    
+                    // Render image link if available
+                    let imgLink = item.image ? `<a href="${item.image}" target="_blank" class="text-blue-500 ml-1 text-xs" title="查看圖片">🖼️ 圖片</a>` : '';
+                    // Render external link (store search) if available
+                    let extLink = item.externalLink ? `<a href="${item.externalLink}" target="_blank" class="text-blue-500 ml-1 text-xs" title="店鋪查詢">🏬 店鋪</a>` : '';
+                    // Render note if available
+                    let noteText = item.note ? `<div class="text-xs text-gray-500 mt-0.5">💡 ${item.note}</div>` : '';
+
+                    html += `
+                        <div class="shop-item" onclick="toggleShopItem(this)">
+                            <input type="checkbox" class="mt-1 mr-2 cursor-pointer" id="${uid}">
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <span class="font-bold text-jp-brown text-xs shop-name flex items-center flex-wrap gap-1">
+                                        ${item.name}
+                                        ${imgLink}
+                                        ${extLink}
+                                    </span>
+                                    <span class="shop-tag ${tagClass}">${item.tag}</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">📍 ${item.location}</div>
+                                ${noteText}
+                            </div>
+                        </div>
+                    `;
                 });
                 html += `</div></div>`;
             }
@@ -1140,6 +1245,9 @@
 
         window.toggleShopItem = (el) => {
             const checkbox = el.querySelector('input[type="checkbox"]');
+            // If user clicked directly on a link (A tag), do nothing here (let the link work)
+            if(event.target.tagName === 'A') return;
+            
             if(event.target !== checkbox) checkbox.checked = !checkbox.checked;
             el.classList.toggle('checked', checkbox.checked);
         };
