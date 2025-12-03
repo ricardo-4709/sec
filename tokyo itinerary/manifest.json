@@ -1,0 +1,20 @@
+{
+  "name": "東京5日遊",
+  "short_name": "東京之旅",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FDFCF5",
+  "theme_color": "#FDFCF5",
+  "icons": [
+    {
+      "src": "[https://cdn-icons-png.flaticon.com/512/201/201623.png](https://cdn-icons-png.flaticon.com/512/201/201623.png)",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "[https://cdn-icons-png.flaticon.com/512/201/201623.png](https://cdn-icons-png.flaticon.com/512/201/201623.png)",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
