@@ -450,8 +450,14 @@
             <div id="update-status" class="mb-4 text-sm font-bold h-6 transition-all duration-300"></div>
             
             <div class="flex flex-col gap-3">
+                 <button onclick="migrateLocalToCloud()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-bold flex items-center justify-center gap-2 shadow-sm border border-blue-700">
+                    <span>📦</span> 從舊版匯入資料 (上傳至雲端)
+                </button>
+                <div class="text-xs text-gray-400 text-left mb-2 px-1">
+                    *如果您之前使用單機版，請點擊上方藍色按鈕，將您舊的資料轉移到雲端資料庫。
+                </div>
                 <button onclick="checkForUpdates()" class="w-full bg-jp-brown text-white py-3 rounded-lg hover:bg-gray-700 transition font-bold flex items-center justify-center gap-2 shadow-sm">
-                    <span>🔄</span> 檢查更新
+                    <span>🔄</span> 檢查連線狀態
                 </button>
                 <button onclick="closeAboutModal()" class="w-full bg-gray-100 text-gray-600 py-3 rounded-lg hover:bg-gray-200 transition font-bold">
                     關閉
@@ -541,7 +547,7 @@
 
         // Constants
         const TRIP_DOC_ID = "tokyo_trip_shared"; // 固定的 ID，讓所有裝置都能存取同一份資料
-        const APP_VERSION = "v4.7.0 (Firebase)";
+        const APP_VERSION = "v4.7.1 (Migration Tool)";
         const docRef = doc(db, "itineraries", TRIP_DOC_ID);
 
         // Default Data (Used if DB is empty)
@@ -859,6 +865,58 @@
                 // 發生錯誤時的降級處理 (Optional)
                 luggageContainer.innerHTML = '<div class="text-center p-4 text-red-400">連線失敗，請檢查網路。</div>';
             });
+        }
+
+        // --- MIGRATION LOGIC (一鍵搬家功能) ---
+        window.migrateLocalToCloud = async function() {
+            // 1. 嘗試讀取可能的舊版 LocalStorage Keys
+            // 這些 Key 是根據常見寫法或之前版本推測的，若您有自訂過，請在此增加
+            const potentialLuggageKeys = ['luggage', 'luggageItems', 'tokyo_luggage'];
+            const potentialSpotsKeys = ['spots', 'spotsData', 'tokyo_spots'];
+            const potentialShopKeys = ['shopping', 'shoppingList', 'tokyo_shopping'];
+
+            let oldLuggage = null;
+            let oldSpots = null;
+            let oldShopping = null;
+
+            // 尋找行李資料
+            for (const key of potentialLuggageKeys) {
+                const item = localStorage.getItem(key);
+                if (item) { oldLuggage = JSON.parse(item); break; }
+            }
+            // 尋找景點資料
+            for (const key of potentialSpotsKeys) {
+                const item = localStorage.getItem(key);
+                if (item) { oldSpots = JSON.parse(item); break; }
+            }
+            // 尋找購物資料
+            for (const key of potentialShopKeys) {
+                const item = localStorage.getItem(key);
+                if (item) { oldShopping = JSON.parse(item); break; }
+            }
+
+            if (!oldLuggage && !oldSpots && !oldShopping) {
+                alert('⚠️ 在您的瀏覽器中找不到舊版資料。\n(可能是已經清除快取，或Key值不匹配)');
+                return;
+            }
+
+            const confirmMsg = `發現舊版資料！\n\n行李項目：${oldLuggage ? oldLuggage.length : 0} 筆\n景點項目：${oldSpots ? oldSpots.length : 0} 筆\n購物項目：${oldShopping ? oldShopping.length : 0} 筆\n\n確定要將這些資料上傳到雲端嗎？\n(這將會覆蓋目前的雲端資料)`;
+            
+            if (confirm(confirmMsg)) {
+                try {
+                    const updateData = {};
+                    if(oldLuggage) updateData.luggage = oldLuggage;
+                    if(oldSpots) updateData.spots = oldSpots;
+                    if(oldShopping) updateData.shopping = oldShopping;
+
+                    await updateDoc(docRef, updateData);
+                    alert('✅ 搬家成功！舊資料已同步到雲端。\n以後換手機也能看到這些資料了。');
+                    closeAboutModal();
+                } catch (e) {
+                    console.error("Migration failed:", e);
+                    alert('❌ 上傳失敗：' + e.message);
+                }
+            }
         }
 
         // Data Savers - Now updating Firestore
