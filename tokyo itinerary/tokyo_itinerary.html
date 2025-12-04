@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>東京 5 日客製化行程規劃 (混合儲存版)</title>
+    <title>東京 5 日客製化行程規劃 (雲端同步輕量版)</title>
     
     <!-- PWA 相關設定 -->
     <meta name="theme-color" content="#FDFCF5">
@@ -564,159 +564,18 @@
 
         // Constants
         const TRIP_DOC_ID = "tokyo_trip_shared"; 
-        const APP_VERSION = "v4.7.2";
+        const APP_VERSION = "v4.7.3";
         const docRef = doc(db, "itineraries", TRIP_DOC_ID);
         const STORAGE_KEY_LUGGAGE = "tokyo_trip_luggage_local";
 
         // Default Data (Used if DB is empty)
         const defaultLuggageItems = [{id:1,category:"3C",location:"大箱",item:"充電頭+線*2",note:"",checked:false},{id:2,category:"化妝、保養",location:"大箱",item:"化妝包",note:"",checked:false},{id:3,category:"化妝、保養",location:"大箱",item:"保養品",note:"雅漾、洗面乳、乳液、卸妝、隱眼",checked:false},{id:4,category:"化妝、保養",location:"大箱",item:"電棒",note:"",checked:false},{id:5,category:"衣物",location:"大箱",item:"靴子",note:"",checked:false},{id:6,category:"衣物",location:"大箱",item:"帽子",note:"",checked:false},{id:7,category:"衣物",location:"大箱",item:"固定髮夾",note:"",checked:false},{id:8,category:"衣物",location:"大箱",item:"褲襪",note:"",checked:false},{id:9,category:"衣物",location:"大箱",item:"睡衣",note:"",checked:false},{id:10,category:"雜物",location:"大箱",item:"護手霜",note:"",checked:false},{id:11,category:"化妝、保養",location:"登機箱",item:"鏡子",note:"",checked:false},{id:12,category:"化妝、保養",location:"登機箱",item:"香水",note:"",checked:false},{id:13,category:"化妝、保養",location:"登機箱",item:"小化妝包",note:"補妝用",checked:false},{id:14,category:"衣物",location:"登機箱",item:"厚外套",note:"",checked:false},{id:15,category:"雜物",location:"登機箱",item:"藥品",note:"",checked:false},{id:16,category:"雜物",location:"登機箱",item:"牙刷",note:"",checked:false},{id:17,category:"雜物",location:"登機箱",item:"暖暖包",note:"",checked:false},{id:18,category:"雜物",location:"登機箱",item:"行李秤",note:"",checked:false},{id:19,category:"3C",location:"隨身包",item:"耳機",note:"",checked:false},{id:20,category:"3C",location:"隨身包",item:"行動電源",note:"",checked:false},{id:21,category:"3C",location:"隨身包",item:"網卡",note:"",checked:false},{id:22,category:"3C",location:"隨身包",item:"自拍棒",note:"",checked:false},{id:23,category:"化妝、保養",location:"隨身包",item:"護唇膏",note:"",checked:false},{id:24,category:"化妝、保養",location:"隨身包",item:"梳子",note:"",checked:false},{id:25,category:"重要",location:"隨身包",item:"護照",note:"",checked:false},{id:26,category:"重要",location:"隨身包",item:"日幣",note:"",checked:false},{id:27,category:"重要",location:"隨身包",item:"提款卡",note:"",checked:false},{id:28,category:"雜物",location:"隨身包",item:"衛生紙",note:"",checked:false},{id:29,category:"雜物",location:"隨身包",item:"濕紙巾",note:"",checked:false},{id:30,category:"雜物",location:"大箱",item:"指甲剪",note:"",checked:false}];
         
-        const defaultSpotsData = [
-            { name: "Chateraise PREMIUM YATSUDOKI Shiodome", type: "food", note: "甜點/蛋糕", map: "https://goo.gl/maps/search/Chateraise+PREMIUM+YATSUDOKI+Shiodome", lat: 35.6645, lng: 139.7588 },
-            { name: "川豊本店", type: "food", note: "成田鰻魚飯老店", map: "https://goo.gl/maps/search/川豊本店", lat: 35.7796, lng: 140.3180 },
-            { name: "鯛ごはん懐石 瓔珞", type: "food", note: "箱根鯛魚飯 (已訂位)", map: "https://goo.gl/maps/search/鯛ごはん懐石+瓔珞", lat: 35.2345, lng: 139.0980 },
-            { name: "まぐろとシャリ 浅草店", type: "food", note: "鮪魚丼飯", map: "https://goo.gl/maps/search/まぐろとシャリ+浅草店", lat: 35.7120, lng: 139.7960 },
-            { name: "TokyoSushiBowl", type: "food", note: "壽司丼", map: "https://goo.gl/maps/search/TokyoSushiBowl", lat: 35.6890, lng: 139.7000 },
-            { name: "Monmouth Tea", type: "food", note: "千馱谷奶茶專賣", map: "https://goo.gl/maps/search/Monmouth+Tea", lat: 35.6790, lng: 139.7070 },
-            { name: "Kenyan Shibuya (ケニヤン)", type: "food", note: "澀谷老牌紅茶店", map: "https://goo.gl/maps/search/Kenyan+Shibuya", lat: 35.6618, lng: 139.6970 },
-            { name: "Marlowe 布丁", type: "food", note: "橫須賀 Port Market 店", address: "6 Shinkocho, Yokosuka, Kanagawa 238-0005日本", map: "https://goo.gl/maps/search/Marlowe+Yokosuka", lat: 35.2840, lng: 139.6680 },
-            { name: "Tsunami", type: "food", note: "橫須賀海軍漢堡/咖哩", address: "日本〒238-0041 Kanagawa, Yokosuka, Honcho, 2 Chome-1-9 飯田ビル", map: "https://goo.gl/maps/search/Tsunami+Yokosuka", lat: 35.2810, lng: 139.6670 },
-            { name: "HONEY BEE", type: "food", note: "橫須賀美軍漢堡", address: "日本〒238-0041 Kanagawa, Yokosuka, Honcho, 2 Chome-１ 本町ビル 1F ハニービ", map: "https://goo.gl/maps/search/HONEY+BEE+Yokosuka", lat: 35.2815, lng: 139.6675 },
-            { name: "Wood Island Curry", type: "food", note: "橫須賀咖哩", map: "https://goo.gl/maps/search/Wood+Island+Yokosuka", lat: 35.2820, lng: 139.6680 },
-            { name: "牛たん 荒 新宿店", type: "food", note: "厚切牛舌", map: "https://goo.gl/maps/search/牛たん+荒+新宿", lat: 35.6900, lng: 139.7000 },
-            { name: "tonkatsu.jp Omotesando", type: "food", note: "頂級炸豬排", map: "https://goo.gl/maps/search/tonkatsu.jp+Omotesando", lat: 35.6653, lng: 139.7115 },
-            { name: "Cafe La Boheme 新宿御苑", type: "food", note: "《你的名字》場景餐廳", map: "https://goo.gl/maps/search/Cafe+La+Boheme+Shinjyuku+gyoen", lat: 35.6880, lng: 139.7100 },
-            { name: "鉄板焼 浅草 KUDAKA", type: "food", note: "鐵板燒", map: "https://goo.gl/maps/search/鉄板焼+浅草+KUDAKA", lat: 35.7130, lng: 139.7950 },
-            { name: "うさぎやCAFÉ", type: "food", note: "上野銅鑼燒鬆餅", map: "https://goo.gl/maps/search/うさぎやCAFÉ", lat: 35.7070, lng: 139.7730 },
-            { name: "Café Lapin", type: "food", note: "上野復古咖啡廳", map: "https://goo.gl/maps/search/Café+Lapin", lat: 35.7060, lng: 139.7740 },
-            { name: "魚屋やまちゃん", type: "food", note: "海鮮居酒屋", map: "https://goo.gl/maps/search/魚屋やまちゃん", lat: 35.6895, lng: 139.7005 },
-            { name: "浅草牛光", type: "food", note: "淺草和牛", map: "https://goo.gl/maps/search/浅草牛光", lat: 35.7125, lng: 139.7955 },
-            { name: "鰻禅", type: "food", note: "淺草鰻魚飯", map: "https://goo.gl/maps/search/鰻禅", lat: 35.7100, lng: 139.8000 },
-            { name: "水喜 Mizuki", type: "food", note: "淺草土鍋飯", address: "3 Chome-16-11 Nishiasakusa, Taito City, Tokyo 111-0035日本", map: "https://goo.gl/maps/search/水喜+Mizuki", lat: 35.7140, lng: 139.7930 },
-            { name: "八十八浅草", type: "food", note: "抹茶專賣", map: "https://goo.gl/maps/search/八十八浅草", lat: 35.7150, lng: 139.7980 },
-            { name: "御菓子司 亀十", type: "food", note: "淺草銅鑼燒", map: "https://goo.gl/maps/search/御菓子司+亀十", lat: 35.7110, lng: 139.7970 },
-            { name: "PATISSERIE TEN&", type: "food", note: "銀座可麗露", map: "https://goo.gl/maps/search/PATISSERIE+TEN", lat: 35.6720, lng: 139.7650 },
-            { name: "Marion Crepes Shibuya Modi", type: "food", note: "澀谷可麗餅", map: "https://www.google.com/maps/search/?api=1&query=Marion+Crepes+Shibuya+Modi", lat: 35.6604, lng: 139.7005 },
-            { name: "RINKAN 西武新宿站店", type: "shopping", note: "二手精品", map: "https://goo.gl/maps/search/RINKAN+西武新宿", externalLink: "https://rinkan-online.com/products/10728-251019-0075", lat: 35.6950, lng: 139.7010 },
-            { name: "大涌谷くろたまご館", type: "shopping", note: "黑蛋紀念品", map: "https://goo.gl/maps/search/大涌谷くろたまご館", lat: 35.2420, lng: 139.0190 },
-            { name: "CBD SHOP -YANAGI-", type: "shopping", note: "澀谷本店 (CBN餅乾)", address: "日本〒150-0041 Tokyo, Shibuya, Jinnan, 1 Chome-12-16 1F 裏口", map: "https://goo.gl/maps/search/CBD+SHOP+YANAGI", lat: 35.6630, lng: 139.6990 },
-            { name: "Vivienne Westwood Man", type: "shopping", note: "表參道店", map: "https://goo.gl/maps/search/Vivienne+Westwood+Man+Omotesando", lat: 35.6660, lng: 139.7090 },
-            { name: "Vivienne Westwood Red Label", type: "shopping", note: "原宿/表參道", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-11-6 ラフォーレ原宿1F", map: "https://goo.gl/maps/search/Vivienne+Westwood+Red+Label", lat: 35.6690, lng: 139.7050 },
-            { name: "Closet Child", type: "shopping", note: "Vivienne 二手", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-7-6 Coxy176 ビル 101", map: "https://goo.gl/maps/search/Closet+Child+Vivienne", lat: 35.6700, lng: 139.7060 },
-            { name: "BEAMS 原宿 Annex", type: "shopping", note: "潮流服飾", map: "https://goo.gl/maps/search/BEAMS+Harajuku+Annex", lat: 35.6710, lng: 139.7050 },
-            { name: "GR8", type: "shopping", note: "原宿 Laforet 精選店", map: "https://goo.gl/maps/search/GR8+Harajuku", lat: 35.6690, lng: 139.7050 },
-            { name: "BEAMS JAPAN", type: "shopping", note: "新宿日本選物", address: "日本〒160-0022 Tokyo, Shinjuku City, Shinjuku, 3 Chome-32-6 B1F 5F", map: "https://goo.gl/maps/search/BEAMS+JAPAN", lat: 35.6910, lng: 139.7020 },
-            { name: "KITH TOKYO", type: "shopping", note: "澀谷宮下公園", map: "https://goo.gl/maps/search/KITH+TOKYO", lat: 35.6620, lng: 139.7020 },
-            { name: "伊勢丹メンズ館", type: "shopping", note: "新宿男士館", map: "https://goo.gl/maps/search/Isetan+Men's", lat: 35.6920, lng: 139.7040 },
-            { name: "HUMAN MADE 原宿", type: "shopping", note: "潮流品牌", map: "https://goo.gl/maps/search/HUMAN+MADE+Harajuku", lat: 35.6695, lng: 139.7055 },
-            { name: "HUMAN MADE OFFLINE STORE", type: "shopping", note: "中目黑/外苑前", map: "https://goo.gl/maps/search/HUMAN+MADE+OFFLINE+STORE", lat: 35.6720, lng: 139.7150 },
-            { name: "銀座カレン (Karen)", type: "shopping", note: "行李箱 (淺草/日本橋)", map: "https://goo.gl/maps/search/Ginza+Karen", lat: 35.6850, lng: 139.7750 },
-            { name: "自家製七味 松宮", type: "shopping", note: "巢鴨七味粉", map: "https://goo.gl/maps/search/Sugamo+Matsumiya", lat: 35.7330, lng: 139.7390 },
-            { name: "Acro Tokyo", type: "shopping", note: "原宿 Laforet", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 1 Chome-11-6 ラフォーレ原宿 B1F", map: "https://goo.gl/maps/search/Acro+Tokyo+Laforet", lat: 35.6690, lng: 139.7050 },
-            { name: "Nepenthes Tokyo", type: "shopping", note: "Needles 本店", map: "https://goo.gl/maps/search/Nepenthes+Tokyo", lat: 35.6650, lng: 139.7080 },
-            { name: "RINKAN 澀谷店", type: "shopping", note: "潮流二手", address: "日本〒150-0041 Tokyo, Shibuya, Jinnan, 1 Chome-12-16 和光 ビル 1F･2F", map: "https://goo.gl/maps/search/RINKAN+Shibuya", externalLink: "https://rinkan-online.com/products/10211-250729-0079", lat: 35.6625, lng: 139.7000 },
-            { name: "STUDIOUS", type: "shopping", note: "原宿/澀谷", address: "日本〒150-0001 Tokyo, Shibuya, Jingumae, 4 Chome-26-32 1F", map: "https://goo.gl/maps/search/STUDIOUS+Tokyo", lat: 35.6680, lng: 139.7060 },
-            { name: "STUDIOUS TOKYO 表参道", type: "shopping", note: "原宿本店", map: "https://goo.gl/maps/search/STUDIOUS+TOKYO+Omotesando", lat: 35.6660, lng: 139.7090 },
-            { name: "Echiré Maison du Beurre", type: "shopping", note: "丸之內艾許奶油", map: "https://goo.gl/maps/search/Echiré+Maison+du+Beurre+Marunouchi", lat: 35.6784, lng: 139.7617 },
-            { name: "BUTTER 美瑛放牧酪農場", type: "shopping", note: "丸之內/奶油甜點", map: "https://www.google.com/maps/search/?api=1&query=BUTTER+美瑛放牧酪農場", lat: 35.6812, lng: 139.7641 },
-            { name: "淺草花筏", type: "sightseeing", note: "和服租借", map: "https://goo.gl/maps/search/Asakusa+Hanaikada", lat: 35.7120, lng: 139.7970 },
-            { name: "須賀神社 男段", type: "sightseeing", note: "《你的名字》階梯", map: "https://goo.gl/maps/search/Suga+Shrine+Stairs", lat: 35.6850, lng: 139.7220 },
-            { name: "聖橋 (Hijiri Bridge)", type: "sightseeing", note: "《鈴芽之旅》場景", map: "https://goo.gl/maps/search/Hijiri+Bridge", lat: 35.6990, lng: 139.7650 },
-            { name: "平和の鳥居", type: "sightseeing", note: "箱根神社水中鳥居", map: "https://goo.gl/maps/search/Heiwa+no+Torii", lat: 35.2030, lng: 139.0270 },
-            { name: "蘆之湖", type: "sightseeing", note: "箱根海賊船", map: "https://goo.gl/maps/search/Lake+Ashi", lat: 35.2100, lng: 139.0050 },
-            { name: "歌舞伎町一番街", type: "sightseeing", note: "新宿地標", map: "https://goo.gl/maps/search/Kabukicho+Ichibangai", lat: 35.6940, lng: 139.7010 },
-            { name: "YOKOSUKA 軍港巡航", type: "sightseeing", note: "橫須賀遊船", map: "https://goo.gl/maps/search/Yokosuka+Naval+Port+Cruise", lat: 35.2845, lng: 139.6650 },
-            { name: "外苑銀杏並木", type: "sightseeing", note: "明治神宮外苑", map: "https://goo.gl/maps/search/Meiji+Jingu+Gaiem+Ginkgo+Avenue", lat: 35.6730, lng: 139.7220 },
-            { name: "待乳山 本龍院", type: "sightseeing", note: "淺草能量景點", map: "https://goo.gl/maps/search/Matsuchiyama+Shoden", lat: 35.7180, lng: 139.8020 },
-            { name: "下北沢 SHELTER", type: "sightseeing", note: "《孤獨搖滾》Live House", map: "https://goo.gl/maps/search/Shimokitazawa+SHELTER", lat: 35.6610, lng: 139.6670 },
-            { name: "澀谷全向十字路口", type: "sightseeing", note: "Shibuya Crossing", map: "https://goo.gl/maps/search/Shibuya+Crossing", lat: 35.6595, lng: 139.7005 },
-            { name: "千躰子育地蔵菩薩", type: "sightseeing", note: "增上寺", map: "https://goo.gl/maps/search/Zojoji+Jizo", lat: 35.6570, lng: 139.7480 },
-            { name: "迎賓館赤坂離宮", type: "sightseeing", note: "西洋宮殿", map: "https://goo.gl/maps/search/Akasaka+Palace", lat: 35.6800, lng: 139.7290 },
-            { name: "皇居", type: "sightseeing", note: "二重橋", map: "https://goo.gl/maps/search/Imperial+Palace+Tokyo", lat: 35.6850, lng: 139.7520 },
-            { name: "成田山新勝寺", type: "sightseeing", note: "成田機場附近", map: "https://goo.gl/maps/search/Naritasan+Shinshoji", lat: 35.7860, lng: 140.3180 },
-            { name: "SHIBUYA SKY", type: "sightseeing", note: "澀谷高空展望台", map: "https://goo.gl/maps/search/SHIBUYA+SKY", lat: 35.6585, lng: 139.7020 },
-            { name: "明治神宮", type: "sightseeing", note: "原宿", map: "https://goo.gl/maps/search/Meiji+Jingu", lat: 35.6760, lng: 139.6990 },
-            { name: "浅草文化観光センター", type: "sightseeing", note: "眺望淺草寺", map: "https://goo.gl/maps/search/Asakusa+Culture+Tourist+Information+Center", lat: 35.7106, lng: 139.7965 },
-            { name: "KALEDOTOWER (待確認)", type: "sightseeing", note: "地點需確認", map: "https://www.google.com/maps", lat: 35.6895, lng: 139.6917 }
-        ];
+        // 已修改：地圖資料已由雲端同步，移除程式碼中的預設資料以節省空間
+        const defaultSpotsData = [];
 
-        // 已修改：將美瞳隱眼歸類到藥妝保養
-        const defaultShoppingList = [
-            { 
-                category: "藥妝保養", 
-                name: "【plus eau】瀏海造型魔法棒", 
-                location: "Loft/Plaza/松本清", 
-                tag: "Drugstore",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17H9zeSenqwoDIlq0Fq3Cx0FNVX707Aky8mIjjbaVjk0etTbXudJsTO1Jslbr3HCCl78VB3jrN51SgMFbUyFU2jq6DBWYINzcIXMF3xgrQbV4aWHfx_TOZKldd3_4MG5J5tIaDEf0QHPMQyJwQRrKxPykiPe?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "EVE止痛藥", 
-                location: "各藥妝店", 
-                tag: "Drugstore",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17GT1d0qAgZeaAjFDIBO7dCR6FPd_gjcCd9t0uwjXUTZ-ZZz3qi8iNC9G6PE5EJe4mS3mSPbUJNcnfiz4jtI1QxIoNV_Tq4wGb4VVRyWkCrrtoJ3PPMhrzAgXyRrSGePk7o97EieQvNU6QEeylWecvYvSHVz?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "Kiss me「睫毛定型液」", 
-                location: "各藥妝店/Donki", 
-                tag: "Drugstore",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17EsNLbYxOh3P5oIM61T6Rl_OEccpgv67w_3MHEjVkZlKee2e4-yE6TganNzMZtAsTmcT3r1JEaCJzEFa4IqaQd2j00OpKEByQmdYK9nrPF_0NEBiTGPhJU2vFpeiz8o9x3HZnwsBprIwoJzJkFWrP-rWhE?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "Melt髪化粧水", 
-                location: "Loft/Plaza", 
-                tag: "Drugstore",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17EPxa0HLPyzCgrDCW6_bRIuno2MmGOsXOH9InRsrTxgJijJc5SxSKNJqeMP-W_48BhbnlWZSBfWY5DJeAAWh-Ghs46cb0WCArXeVMExzfvURMFZxyR6gHvMyl-6ionGYtWFW-aW-y-B3Qn-8AIhrmIBQp4?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "UHA味覺糖補鐵營養軟糖", 
-                location: "各藥妝店/超商", 
-                tag: "Drugstore",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17GtFCsp-qhvAXjGJUd5zlv5vC3l15oRHhIZZmFMyzJgMtl3KKJNTAEzuQ0Uhk9mEpWS9GIb3_snAqNJH3_lb_LfsTgNsUtTN4zM4iadRZt0H61tNXITYEQ-kl6IGRNzbLm7ULAPxWeahg3-wFwNhiwVulYY?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "Cp-Lip 唇部精華液", 
-                location: "各藥妝店", 
-                tag: "Drugstore",
-                image: "https://sakurayala.com/cdn/shop/files/05931487-2AC4-43C4-B7E0-916429CD6E11.jpg?v=1763238799&width=600"
-            },
-            { 
-                category: "藥妝保養", 
-                name: "SOFINA iP 精華乳霜", 
-                location: "松本清/專櫃", 
-                tag: "Drugstore",
-                image: "https://kao-h.assetsadobe3.com/is/image/content/dam/sites/kao/web-sofina-com/hk/ip/v3/products/moisturecareshot/pc/products_img_v2.png?fmt=webp&wid=640"
-            },
-            { category: "藥妝保養", name: "隱眼 (BARRIEYES)", location: "Donki/BicContact", tag: "Contact" },
-            { category: "藥妝保養", name: "隱眼 (GAL NEVER DIE)", location: "Donki", tag: "Contact" },
-            { category: "藥妝保養", name: "隱眼 (NS COLLECTION)", location: "Donki", tag: "Contact" },
-            { 
-                category: "生活雜貨/電器", 
-                name: "3coins微波爐烤盤", 
-                location: "3COINS", 
-                tag: "Variety",
-                image: "https://lh7-rt.googleusercontent.com/sheetsz/AHOq17HhrA_pDoPeoM2hnoHJ5JF7KK3vSWSKSNs7k9jzKwIq7olB4JZXG3hz5irdB63CFSW3OXGYOhDdarWJQzHe101t6eDe5WcYFgfJqoySolhch6TXKH5B6u-XB0wOjGtj79O760rDViq6Mgi20QZm1etXcXgc?key=GIdYLBhCljRantezzAd-jA"
-            },
-            { 
-                category: "生活雜貨/電器", 
-                name: "recolte調理機", 
-                location: "Bic/Yodobashi", 
-                tag: "Variety",
-                image: "https://scontent.ftpe8-3.fna.fbcdn.net/v/t39.30808-6/486165925_1087625106734088_7696211871505451010_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=QU2VvGqj1Q0Q7kNvwEQGqhZ&_nc_oc=AdmcZlz5C0aDqepttXn7ABnLd_Oc08s9lIhYPv-1mq0qwZL82D9MAsgn6WAOawwyzZw&_nc_zt=23&_nc_ht=scontent.ftpe8-3.fna&_nc_gid=TWdy91AXSkEWGsKIX1Si-w&oh=00_AfkPeroTWMibA3pIbETwT9sC3Qa6EAEZEZlv3oOlwS4wpQ&oe=693578C0"
-            },
-            { 
-                category: "服飾配件", 
-                name: "靴下屋的保暖褲襪", 
-                location: "Tabio/靴下屋", 
-                tag: "Fashion",
-                note: "買80丹以下，推薦色號34",
-                externalLink: "https://tabio.com/jp/corporate/store/"
-            }
-        ];
+        // 已修改：購物資料已由雲端同步，移除程式碼中的預設資料以節省空間
+        const defaultShoppingList = [];
 
         const itineraryDetails = {
             day1: [
